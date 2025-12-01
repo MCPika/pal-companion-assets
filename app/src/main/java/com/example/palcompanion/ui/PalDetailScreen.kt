@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.R
 import com.example.palcompanion.model.Pal
+import java.util.Locale
 
 @Composable
 fun PalDetailScreen(pal: Pal, navController: NavController) {
@@ -37,6 +38,14 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
     val powerCooldownColor = Color(0xFFFFB52E)
     val levelColor = Color(0xFF43A6C6)
     val specialDropColor = Color(0xFFFFB52E)
+
+    val formattedPalName = if (pal.name.contains(" ")) {
+        pal.name.split(" ").joinToString(" ") { word ->
+            word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        }
+    } else {
+        pal.name
+    }
 
     Box(modifier = Modifier.padding(start = 8.dp, end = 8.dp)) {
         LazyColumn {
@@ -47,7 +56,7 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                 ) {
                     Image(
                         painter = rememberAsyncImagePainter(model = pal.imageUrl),
-                        contentDescription = pal.name,
+                        contentDescription = formattedPalName,
                         modifier = Modifier
                             .padding(top = 16.dp)
                             .size(128.dp)
@@ -59,7 +68,7 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
                         Text(
-                            text = "#${pal.id} ${pal.name}",
+                            text = "#${pal.id} $formattedPalName",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         pal.elements.forEach { element ->

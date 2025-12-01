@@ -44,6 +44,7 @@ import com.example.palcompanion.R
 import com.example.palcompanion.model.Pal
 import com.example.palcompanion.model.PalElement
 import com.example.palcompanion.model.WorkSuitability
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -82,7 +83,14 @@ fun PalList(
 
         LazyColumn(modifier = Modifier.padding(top = 8.dp)) {
             items(palList) { pal ->
-                PalListItem(pal = pal, onPalClicked = onPalClicked)
+                val formattedPalName = if (pal.name.contains(" ")) {
+                    pal.name.split(" ").joinToString(" ") { word ->
+                        word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                    }
+                } else {
+                    pal.name
+                }
+                PalListItem(pal = pal.copy(name = formattedPalName), onPalClicked = onPalClicked)
             }
         }
     }

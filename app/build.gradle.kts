@@ -8,9 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.palcompanion"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.palcompanion"

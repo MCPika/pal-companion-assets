@@ -1,5 +1,6 @@
 package com.example.palcompanion.ui.breeds
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,17 +28,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.palcompanion.data.Breeding
+import java.util.Locale
 import java.util.UUID
 import kotlin.math.max
 
@@ -153,39 +158,100 @@ fun BreedingTreeScreen(
 
 @Composable
 fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot: Boolean) {
-    Layout(
-        content = {
+    SubcomposeLayout { constraints ->
+        val palNodePlaceable = subcompose("palNode") {
             PalNode(
                 palName = node.palName,
                 isCrowned = isRoot,
                 size = if (isRoot) 80.dp else 40.dp,
                 onPalSelected = { onPalSelected(node.palName, node.id) }
             )
+        }.first().measure(constraints)
+
+        val parentPlaceables = subcompose("parents") {
             node.parents?.let { (parent1, parent2) ->
                 BreedingTree(node = parent1, onPalSelected = onPalSelected, isRoot = false)
                 BreedingTree(node = parent2, onPalSelected = onPalSelected, isRoot = false)
             }
-        }
-    ) { measurables, constraints ->
-        val palNodePlaceable = measurables.first().measure(constraints)
-        val parentPlaceables = if (measurables.size > 1) listOf(measurables[1].measure(constraints), measurables[2].measure(constraints)) else null
+        }.map { it.measure(constraints) }
 
-        val parent1Width = parentPlaceables?.get(0)?.width ?: 0
-        val parent2Width = parentPlaceables?.get(1)?.width ?: 0
+        val parentsTotalWidth = parentPlaceables.sumOf { it.width }
+        val spacing = 30.dp.toPx()
 
-        val width = max(palNodePlaceable.width, parent1Width + parent2Width)
-        val height = palNodePlaceable.height + (parentPlaceables?.maxOfOrNull { it.height } ?: 0)
+        val width = max(palNodePlaceable.width, parentsTotalWidth)
+        val height = (palNodePlaceable.height + spacing + (parentPlaceables.maxOfOrNull { it.height } ?: 0)).toInt()
+
+        val canvasPlaceable = subcompose("canvas") {
+            Canvas(modifier = Modifier.size(width.toDp(), height.toDp())) {
+                if (parentPlaceables.isNotEmpty()) {
+                    val childBottomY = palNodePlaceable.height.toFloat()
+                    val parentsTopY = palNodePlaceable.height + spacing
+
+                    val arrowSize = 6.dp.toPx()
+                    val arrowTipY = childBottomY
+                    val arrowBaseY = arrowTipY - arrowSize
+
+                    val middleY = (arrowTipY + parentsTopY) / 2f
+
+                    val childCenterX = size.width / 2f
+                    val parentsStartX = (size.width - parentsTotalWidth) / 2f
+                    val parent1CenterX = parentsStartX + parentPlaceables[0].width / 2f
+                    val parent2CenterX = parentsStartX + parentPlaceables[0].width + parentPlaceables[1].width / 2f
+
+                    // Vertical Line from T-junction up to the arrow tip
+                    drawLine(
+                        color = Color.White,
+                        start = Offset(childCenterX, middleY),
+                        end = Offset(childCenterX, arrowTipY),
+                        strokeWidth = 2.dp.toPx()
+                    )
+
+                    // Horizontal T-junction line
+                    drawLine(
+                        Color.White,
+                        Offset(parent1CenterX, middleY),
+                        Offset(parent2CenterX, middleY),
+                        2.dp.toPx()
+                    )
+
+                    // Lines down to parents
+                    drawLine(
+                        Color.White,
+                        Offset(parent1CenterX, middleY),
+                        Offset(parent1CenterX, parentsTopY),
+                        2.dp.toPx()
+                    )
+                    drawLine(
+                        Color.White,
+                        Offset(parent2CenterX, middleY),
+                        Offset(parent2CenterX, parentsTopY),
+                        2.dp.toPx()
+                    )
+
+                    // Upward-pointing Arrowhead
+                    val arrowPath = Path().apply {
+                        moveTo(childCenterX, arrowBaseY)
+                        lineTo(childCenterX - (arrowSize / 2f), arrowTipY)
+                        lineTo(childCenterX + (arrowSize / 2f), arrowTipY)
+                        close()
+                    }
+                    drawPath(arrowPath, Color.White)
+                }
+            }
+        }.first().measure(Constraints.fixed(width, height))
 
         layout(width, height) {
+            val parentsStartX = (width - parentsTotalWidth) / 2
+
+            canvasPlaceable.placeRelative(0, 0)
             palNodePlaceable.placeRelative(x = (width - palNodePlaceable.width) / 2, y = 0)
-            parentPlaceables?.let {
-                it[0].placeRelative(x = 0, y = palNodePlaceable.height)
-                it[1].placeRelative(x = parent1Width, y = palNodePlaceable.height)
+            if (parentPlaceables.isNotEmpty()) {
+                parentPlaceables[0].placeRelative(x = parentsStartX, y = (palNodePlaceable.height + spacing).toInt())
+                parentPlaceables[1].placeRelative(x = parentsStartX + parentPlaceables[0].width, y = (palNodePlaceable.height + spacing).toInt())
             }
         }
     }
 }
-
 
 @Composable
 fun PalNode(
@@ -223,6 +289,13 @@ fun PalNode(
                 )
             }
         }
-        Text(text = palName, color = Color.White, modifier = Modifier.padding(top = 4.dp))
+        val formattedPalName = if (palName.contains(" ")) {
+            palName.split(" ").joinToString(" ") { word ->
+                word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+            }
+        } else {
+            palName
+        }
+        Text(text = formattedPalName, color = Color.White, modifier = Modifier.padding(top = 4.dp))
     }
 }
