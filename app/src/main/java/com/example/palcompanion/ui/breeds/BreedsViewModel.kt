@@ -73,6 +73,39 @@ class BreedsViewModel(
         }
     }
 
+    fun clearAll() {
+        val currentState = _breedsUiState.value
+        if (currentState is BreedsUiState.Success) {
+            val newRoot = PalNode(initialPalName)
+            _breedsUiState.value = currentState.copy(rootNode = newRoot, selectedNodeId = newRoot.id)
+            getBreedsForPal(initialPalName, newRoot.id)
+        }
+    }
+
+    fun clearNode(nodeId: String) {
+        val currentState = _breedsUiState.value
+        if (currentState is BreedsUiState.Success) {
+            val newRoot = removeSubtree(currentState.rootNode, nodeId)
+            _breedsUiState.value = currentState.copy(rootNode = newRoot)
+        }
+    }
+
+    private fun removeSubtree(currentNode: PalNode, targetNodeId: String): PalNode {
+        if (currentNode.id == targetNodeId) {
+            return currentNode.copy(parents = null)
+        }
+
+        currentNode.parents?.let { (p1, p2) ->
+            val updatedP1 = removeSubtree(p1, targetNodeId)
+            val updatedP2 = removeSubtree(p2, targetNodeId)
+            if (updatedP1 !== p1 || updatedP2 !== p2) {
+                return currentNode.copy(parents = Pair(updatedP1, updatedP2))
+            }
+        }
+
+        return currentNode
+    }
+
     private fun updateNodeInTree(currentNode: PalNode, targetNodeId: String, parent1Name: String, parent2Name: String): PalNode {
         if (currentNode.id == targetNodeId && currentNode.parents == null) {
             return currentNode.copy(parents = Pair(PalNode(parent1Name), PalNode(parent2Name)))

@@ -8,13 +8,16 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,8 +58,8 @@ data class PalNode(
 @Composable
 fun BreedingTreeRoute(
     modifier: Modifier = Modifier,
+    viewModel: BreedsViewModel = viewModel(factory = BreedsViewModel.Factory)
 ) {
-    val viewModel: BreedsViewModel = viewModel(factory = BreedsViewModel.Factory)
     val uiState by viewModel.breedsUiState.collectAsState()
 
     when (val currentState = uiState) {
@@ -84,7 +87,11 @@ fun BreedingTreeRoute(
                 combinations = currentState.breeds,
                 rootNode = rootNode,
                 onBreedingSelected = { viewModel.onBreedingSelected(it) },
-                onPalSelected = { palName, nodeId -> viewModel.getBreedsForPal(palName, nodeId) }
+                onPalSelected = { palName, nodeId -> viewModel.getBreedsForPal(palName, nodeId) },
+                onClearOne = { viewModel.clearNode(currentState.selectedNodeId ?: "") },
+                onClearAll = { viewModel.clearAll() },
+                isClearOneEnabled = currentState.selectedNodeId != null && currentState.selectedNodeId != currentState.rootNode.id,
+                selectedNodeId = currentState.selectedNodeId
             )
         }
     }
@@ -96,7 +103,11 @@ fun BreedingTreeScreen(
     combinations: List<Breeding>,
     rootNode: PalNode,
     onBreedingSelected: (Breeding) -> Unit,
-    onPalSelected: (String, String) -> Unit
+    onPalSelected: (String, String) -> Unit,
+    onClearOne: () -> Unit,
+    onClearAll: () -> Unit,
+    isClearOneEnabled: Boolean,
+    selectedNodeId: String?
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
     var offsetX by remember { mutableFloatStateOf(0f) }
@@ -117,15 +128,27 @@ fun BreedingTreeScreen(
             contentAlignment = Alignment.Center
         ) {
             Box(
-                modifier = Modifier
-                    .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offsetX,
-                        translationY = offsetY
-                    )
+                modifier = Modifier.graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale,
+                    translationX = offsetX,
+                    translationY = offsetY
+                )
             ) {
-                BreedingTree(node = rootNode, onPalSelected = onPalSelected, isRoot = true)
+                BreedingTree(node = rootNode, onPalSelected = onPalSelected, isRoot = true, selectedNodeId = selectedNodeId)
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(onClick = onClearOne, enabled = isClearOneEnabled) {
+                Text(text = "Clear One")
+            }
+            Button(onClick = onClearAll) {
+                Text(text = "Clear All")
             }
         }
         Box(
@@ -157,35 +180,38 @@ fun BreedingTreeScreen(
 
 
 @Composable
-fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot: Boolean) {
+fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot: Boolean, selectedNodeId: String?) {
+    val horizontalSpacing = 16.dp
+    val verticalSpacing = 30.dp
+
     SubcomposeLayout { constraints ->
         val palNodePlaceable = subcompose("palNode") {
             PalNode(
                 palName = node.palName,
                 isCrowned = isRoot,
                 size = if (isRoot) 80.dp else 40.dp,
-                onPalSelected = { onPalSelected(node.palName, node.id) }
+                onPalSelected = { onPalSelected(node.palName, node.id) },
+                isSelected = node.id == selectedNodeId
             )
         }.first().measure(constraints)
 
         val parentPlaceables = subcompose("parents") {
             node.parents?.let { (parent1, parent2) ->
-                BreedingTree(node = parent1, onPalSelected = onPalSelected, isRoot = false)
-                BreedingTree(node = parent2, onPalSelected = onPalSelected, isRoot = false)
+                BreedingTree(node = parent1, onPalSelected = onPalSelected, isRoot = false, selectedNodeId = selectedNodeId)
+                BreedingTree(node = parent2, onPalSelected = onPalSelected, isRoot = false, selectedNodeId = selectedNodeId)
             }
         }.map { it.measure(constraints) }
 
-        val parentsTotalWidth = parentPlaceables.sumOf { it.width }
-        val spacing = 30.dp.toPx()
+        val parentsTotalWidth = parentPlaceables.sumOf { it.width } + if (parentPlaceables.isNotEmpty()) horizontalSpacing.toPx() else 0f
 
-        val width = max(palNodePlaceable.width, parentsTotalWidth)
-        val height = (palNodePlaceable.height + spacing + (parentPlaceables.maxOfOrNull { it.height } ?: 0)).toInt()
+        val width = max(palNodePlaceable.width.toFloat(), parentsTotalWidth).toInt()
+        val height = (palNodePlaceable.height + verticalSpacing.toPx() + (parentPlaceables.maxOfOrNull { it.height } ?: 0)).toInt()
 
         val canvasPlaceable = subcompose("canvas") {
             Canvas(modifier = Modifier.size(width.toDp(), height.toDp())) {
                 if (parentPlaceables.isNotEmpty()) {
                     val childBottomY = palNodePlaceable.height.toFloat()
-                    val parentsTopY = palNodePlaceable.height + spacing
+                    val parentsTopY = palNodePlaceable.height + verticalSpacing.toPx()
 
                     val arrowSize = 6.dp.toPx()
                     val arrowTipY = childBottomY
@@ -193,10 +219,10 @@ fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot:
 
                     val middleY = (arrowTipY + parentsTopY) / 2f
 
-                    val childCenterX = size.width / 2f
-                    val parentsStartX = (size.width - parentsTotalWidth) / 2f
+                    val childCenterX = width / 2f
+                    val parentsStartX = (width - parentsTotalWidth) / 2f
                     val parent1CenterX = parentsStartX + parentPlaceables[0].width / 2f
-                    val parent2CenterX = parentsStartX + parentPlaceables[0].width + parentPlaceables[1].width / 2f
+                    val parent2CenterX = parentsStartX + parentPlaceables[0].width + horizontalSpacing.toPx() + parentPlaceables[1].width / 2f
 
                     // Vertical Line from T-junction up to the arrow tip
                     drawLine(
@@ -211,7 +237,7 @@ fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot:
                         Color.White,
                         Offset(parent1CenterX, middleY),
                         Offset(parent2CenterX, middleY),
-                        2.dp.toPx()
+                        strokeWidth = 2.dp.toPx()
                     )
 
                     // Lines down to parents
@@ -219,13 +245,13 @@ fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot:
                         Color.White,
                         Offset(parent1CenterX, middleY),
                         Offset(parent1CenterX, parentsTopY),
-                        2.dp.toPx()
+                        strokeWidth = 2.dp.toPx()
                     )
                     drawLine(
                         Color.White,
                         Offset(parent2CenterX, middleY),
                         Offset(parent2CenterX, parentsTopY),
-                        2.dp.toPx()
+                        strokeWidth = 2.dp.toPx()
                     )
 
                     // Upward-pointing Arrowhead
@@ -241,13 +267,14 @@ fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot:
         }.first().measure(Constraints.fixed(width, height))
 
         layout(width, height) {
-            val parentsStartX = (width - parentsTotalWidth) / 2
+            val parentsStartX = (width - parentsTotalWidth.toInt()) / 2
 
             canvasPlaceable.placeRelative(0, 0)
             palNodePlaceable.placeRelative(x = (width - palNodePlaceable.width) / 2, y = 0)
+
             if (parentPlaceables.isNotEmpty()) {
-                parentPlaceables[0].placeRelative(x = parentsStartX, y = (palNodePlaceable.height + spacing).toInt())
-                parentPlaceables[1].placeRelative(x = parentsStartX + parentPlaceables[0].width, y = (palNodePlaceable.height + spacing).toInt())
+                parentPlaceables[0].placeRelative(x = parentsStartX, y = (palNodePlaceable.height + verticalSpacing.toPx()).toInt())
+                parentPlaceables[1].placeRelative(x = parentsStartX + parentPlaceables[0].width + horizontalSpacing.toPx().toInt(), y = (palNodePlaceable.height + verticalSpacing.toPx()).toInt())
             }
         }
     }
@@ -258,7 +285,8 @@ fun PalNode(
     palName: String,
     isCrowned: Boolean,
     size: Dp,
-    onPalSelected: () -> Unit
+    onPalSelected: () -> Unit,
+    isSelected: Boolean
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -277,7 +305,11 @@ fun PalNode(
                 modifier = Modifier
                     .size(size)
                     .clip(CircleShape)
-                    .border(1.dp, Color.White, CircleShape)
+                    .border(
+                        1.dp,
+                        if (isSelected) Color.Red else Color.White,
+                        CircleShape
+                    )
             )
             if (isCrowned) {
                 AsyncImage(
