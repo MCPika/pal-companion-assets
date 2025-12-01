@@ -150,14 +150,14 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                         style = MaterialTheme.typography.headlineSmall,
                         color = titleColor
                     )
-                    pal.workSuitability.forEach {
+                    pal.workSuitability.forEach { work ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
-                                painter = rememberAsyncImagePainter(model = it.type.iconUrl),
-                                contentDescription = stringResource(it.type.displayName),
+                                painter = rememberAsyncImagePainter(model = work.type.iconUrl),
+                                contentDescription = stringResource(work.type.displayName),
                                 modifier = Modifier.size(24.dp)
                             )
-                            Text(text = " ${stringResource(it.type.displayName)} - ${stringResource(R.string.level)} ${it.level}")
+                            Text(text = " ${stringResource(work.type.displayName)} - ${stringResource(R.string.level)} ${work.level}")
                         }
                     }
                 }

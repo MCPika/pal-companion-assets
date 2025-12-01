@@ -34,9 +34,9 @@ import com.example.palcompanion.data.Datasource
 import com.example.palcompanion.model.Pal
 
 @Composable
-fun PalListItem(pal: Pal, onPalClicked: (Pal) -> Unit, modifier: Modifier = Modifier) {
+fun PalListItem(pal: Pal, onPalClicked: (Pal) -> Unit) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .padding(horizontal = 2.dp, vertical = 2.dp)
             .clickable { onPalClicked(pal) },
         border = BorderStroke(1.dp, Color.White)

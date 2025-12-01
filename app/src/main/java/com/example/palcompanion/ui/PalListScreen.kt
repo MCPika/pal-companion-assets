@@ -26,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,7 +59,6 @@ fun PalList(
     val selectedJobLevels by viewModel.selectedJobLevels.collectAsState()
 
     var openBottomSheet by remember { mutableStateOf(false) }
-    val bottomSheetState = rememberModalBottomSheetState()
 
     Column(modifier = modifier) {
         OutlinedTextField(
@@ -98,7 +96,6 @@ fun PalList(
     if (openBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
-            sheetState = bottomSheetState
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -109,7 +106,7 @@ fun PalList(
                     }
                 }
                 FlowRow(modifier = Modifier.padding(vertical = 8.dp)) {
-                    PalElement.values().forEach { element ->
+                    PalElement.entries.forEach { element ->
                         val isSelected = selectedPalElements.contains(element)
                         IconButton(onClick = { viewModel.onPalElementFilterClicked(element) }) {
                             Box(
@@ -143,7 +140,7 @@ fun PalList(
                     }
                 }
                 FlowRow(modifier = Modifier.padding(vertical = 8.dp)) {
-                    WorkSuitability.values().forEach { work ->
+                    WorkSuitability.entries.forEach { work ->
                         val isSelected = selectedWorkSuitabilities.contains(work)
                         IconButton(onClick = { viewModel.onWorkSuitabilityFilterClicked(work) }) {
                             Box(
