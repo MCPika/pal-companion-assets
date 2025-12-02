@@ -177,13 +177,18 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                         color = titleColor
                     )
                     pal.drops.forEach { drop ->
-                        if (!drop.special.isNullOrEmpty()) {
-                            Row {
-                                Text(text = "• ${drop.name} - ")
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model = drop.imageUrl),
+                                contentDescription = drop.name,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            if (!drop.special.isNullOrEmpty()) {
+                                Text(text = " ${drop.name} - ")
                                 Text(text = drop.special, color = specialDropColor)
+                            } else {
+                                Text(text = " ${drop.name} (${drop.quantity ?: ""}) - ${drop.rate ?: ""}")
                             }
-                        } else {
-                            Text(text = "• ${drop.name} (${drop.quantity ?: ""}) - ${drop.rate ?: ""}")
                         }
                     }
                 }

@@ -19,17 +19,57 @@ class FarmPalViewModel(application: Application) : AndroidViewModel(application)
     private val _pals = MutableStateFlow<List<Pal>>(emptyList())
     val pals: StateFlow<List<Pal>> = _pals.asStateFlow()
 
+    private val _selectedFarmDrop = MutableStateFlow<String?>(null)
+    val selectedFarmDrop: StateFlow<String?> = _selectedFarmDrop.asStateFlow()
+
+    private var allPals: List<Pal> = emptyList()
+
+    val farmDrops = listOf(
+        "Bone",
+        "Cotton Candy",
+        "Egg",
+        "Flame Organ",
+        "Gold Coin",
+        "High Quality Cloth",
+        "High Quality Pal Oil",
+        "Honey",
+        "Milk",
+        "Pal Fluids",
+        "Red Berries",
+        "Venom Gland",
+        "Wool"
+    ).sorted()
+
     init {
         loadPals()
+        viewModelScope.launch {
+            selectedFarmDrop.collect { selectedDrop ->
+                if (selectedDrop == null) {
+                    _pals.value = allPals
+                } else {
+                    _pals.value = allPals.filter { pal ->
+                        pal.drops.any { drop -> drop.name == selectedDrop && drop.special == "Farm Drop" }
+                    }
+                }
+            }
+        }
     }
 
     private fun loadPals() {
         viewModelScope.launch {
-            val allPals = Datasource(getApplication()).loadPals()
-            _pals.value = allPals.filter { pal ->
+            allPals = Datasource(getApplication()).loadPals().filter { pal ->
                 pal.workSuitability.any { it.type == WorkSuitability.FARMING }
             }
+            _pals.value = allPals
         }
+    }
+
+    fun onFarmDropSelected(farmDrop: String) {
+        _selectedFarmDrop.value = farmDrop
+    }
+
+    fun clearFarmDropSelection() {
+        _selectedFarmDrop.value = null
     }
 
     companion object {

@@ -34,7 +34,10 @@ data class Drop(
     val quantity: String? = null,
     val rate: String? = null,
     val special: String? = null
-)
+) {
+    val imageUrl: String
+        get() = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops/${name.replace(' ', '_').lowercase()}.png"
+}
 
 
 data class ActiveSkill(
