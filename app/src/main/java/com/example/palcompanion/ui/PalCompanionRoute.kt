@@ -18,18 +18,12 @@ sealed class PalCompanionRoute(val route: String) {
         fun createRoute(palName: String) = "pal_detail/$palName"
     }
 
-    object Breeds : PalCompanionRoute("breeds?childPalName={childPalName}") {
-        fun createRoute(childPalName: String? = null): String {
-            return if (childPalName != null) {
-                "breeds?childPalName=$childPalName"
-            } else {
-                "breeds"
-            }
-        }
-    }
+    object Breeds : PalCompanionRoute("breeds?childPalName={childPalName}")
     object BreedingTree : PalCompanionRoute("breeding_tree/{palName}") {
         fun createRoute(palName: String) = "breeding_tree/$palName"
     }
+
+    object FarmPal : PalCompanionRoute("farm_pal")
 }
 
 @Composable
@@ -77,8 +71,11 @@ fun PalCompanionNavHost(
         composable(
              route = PalCompanionRoute.BreedingTree.route,
              arguments = listOf(navArgument("palName") { type = NavType.StringType })
-        ) { backStackEntry ->
+        ) { _ ->
             BreedingTreeRoute()
+        }
+        composable(PalCompanionRoute.FarmPal.route) {
+            FarmPalScreen(navController = navController)
         }
     }
 }

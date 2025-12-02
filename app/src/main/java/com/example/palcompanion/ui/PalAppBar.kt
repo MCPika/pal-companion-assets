@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +22,11 @@ import androidx.compose.ui.unit.dp
 import com.example.palcompanion.R
 
 @Composable
-fun PalAppBar(modifier: Modifier = Modifier, title: String? = null) {
+fun PalAppBar(
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    onMenuClicked: () -> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -30,6 +38,9 @@ fun PalAppBar(modifier: Modifier = Modifier, title: String? = null) {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        IconButton(onClick = onMenuClicked) {
+            Icon(Icons.Default.Menu, contentDescription = "Menu")
+        }
         if (title != null) {
             Text(
                 text = title,
@@ -45,5 +56,5 @@ fun PalAppBar(modifier: Modifier = Modifier, title: String? = null) {
 @Preview(showBackground = true)
 @Composable
 fun PalAppBarPreview() {
-    PalAppBar(title = "Pal Companion")
+    PalAppBar(title = "Pal Companion", onMenuClicked = {})
 }
