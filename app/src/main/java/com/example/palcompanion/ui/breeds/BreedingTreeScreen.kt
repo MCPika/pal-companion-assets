@@ -8,11 +8,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.Button
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -21,9 +22,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -56,7 +61,6 @@ import com.example.palcompanion.data.Breeding
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
-import androidx.compose.ui.graphics.Path
 import kotlin.math.max
 
 data class PalNode(
@@ -174,6 +178,7 @@ fun BreedingTreeRoute(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BreedingTreeScreen(
     modifier: Modifier = Modifier,
@@ -190,14 +195,47 @@ fun BreedingTreeScreen(
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
 
-    Column(modifier = modifier.fillMaxSize()) {
+    val scaffoldState = rememberBottomSheetScaffoldState()
+    val scope = rememberCoroutineScope()
+
+    BottomSheetScaffold(
+        modifier = modifier,
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 0.dp,
+        sheetContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(Color.DarkGray),
+            ) {
+                if (combinations.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(text = "Select a Pal to see breeding combinations.", color = Color.White)
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        items(combinations) { combination ->
+                            BreedingCard(
+                                breeding = combination,
+                                onBreedingSelected = onBreedingSelected
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    ) { innerPadding ->
+        // Main breeding tree container with zoom/pan
         Box(
             modifier = Modifier
-                .weight(0.7f)
                 .fillMaxSize()
                 .pointerInput(Unit) {
                     detectTransformGestures { _, pan, zoom, _ ->
-                        scale *= zoom
+                        scale = max(0.5f, scale * zoom)
                         offsetX += pan.x
                         offsetY += pan.y
                     }
@@ -212,43 +250,44 @@ fun BreedingTreeScreen(
                     translationY = offsetY
                 )
             ) {
-                BreedingTree(node = rootNode, onPalSelected = onPalSelected, isRoot = true, selectedNodeId = selectedNodeId)
+                BreedingTree(
+                    node = rootNode,
+                    onPalSelected = { palName, nodeId ->
+                        onPalSelected(palName, nodeId)
+                        scope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                        }
+                    },
+                    isRoot = true,
+                    selectedNodeId = selectedNodeId
+                )
             }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(onClick = onClearOne, enabled = isClearOneEnabled) {
-                Text(text = "Clear One")
-            }
-            Button(onClick = onClearAll) {
-                Text(text = "Clear All")
-            }
-        }
-        Box(
-            modifier = Modifier
-                .weight(0.3f)
-                .fillMaxSize()
-                .background(Color.DarkGray),
-        ) {
-            if (combinations.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "No breeding combinations found for this Pal.", color = Color.White)
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.padding(top = 2.dp, bottom = 2.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+
+            // Optional buttons (Clear One / Clear All)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(innerPadding)
+                    .padding(horizontal = 8.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = {
+                        onClearOne()
+                        scope.launch { scaffoldState.bottomSheetState.hide() }
+                    },
+                    enabled = isClearOneEnabled
                 ) {
-                    items(combinations) { combination ->
-                        BreedingCard(
-                            breeding = combination,
-                            onBreedingSelected = onBreedingSelected
-                        )
+                    Text(text = "Clear One")
+                }
+                Button(
+                    onClick = {
+                        onClearAll()
+                        scope.launch { scaffoldState.bottomSheetState.hide() }
                     }
+                ) {
+                    Text(text = "Clear All")
                 }
             }
         }
