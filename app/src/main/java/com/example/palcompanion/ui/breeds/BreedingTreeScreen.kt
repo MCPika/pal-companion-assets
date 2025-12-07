@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
 import kotlin.math.max
+import androidx.compose.material3.SheetValue
 
 data class PalNode(
     val palName: String,
@@ -201,17 +202,23 @@ fun BreedingTreeScreen(
     BottomSheetScaffold(
         modifier = modifier,
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 0.dp,
+        sheetPeekHeight = 0.dp, // collapsed height
         sheetContent = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
+                    .fillMaxHeight(0.9f)
                     .background(Color.DarkGray),
             ) {
                 if (combinations.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = "Select a Pal to see breeding combinations.", color = Color.White)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Select a Pal to see breeding combinations.",
+                            color = Color.White
+                        )
                     }
                 } else {
                     LazyColumn(
@@ -229,7 +236,6 @@ fun BreedingTreeScreen(
             }
         }
     ) { innerPadding ->
-        // Main breeding tree container with zoom/pan
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -255,7 +261,7 @@ fun BreedingTreeScreen(
                     onPalSelected = { palName, nodeId ->
                         onPalSelected(palName, nodeId)
                         scope.launch {
-                            scaffoldState.bottomSheetState.expand()
+                            scaffoldState.bottomSheetState.expand() // fully open on selection
                         }
                     },
                     isRoot = true,
@@ -263,7 +269,6 @@ fun BreedingTreeScreen(
                 )
             }
 
-            // Optional buttons (Clear One / Clear All)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -275,16 +280,21 @@ fun BreedingTreeScreen(
                 Button(
                     onClick = {
                         onClearOne()
-                        scope.launch { scaffoldState.bottomSheetState.hide() }
+                        scope.launch {
+                            scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
+                        }
                     },
                     enabled = isClearOneEnabled
                 ) {
                     Text(text = "Clear One")
                 }
+
                 Button(
                     onClick = {
                         onClearAll()
-                        scope.launch { scaffoldState.bottomSheetState.hide() }
+                        scope.launch {
+                            scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
+                        }
                     }
                 ) {
                     Text(text = "Clear All")
