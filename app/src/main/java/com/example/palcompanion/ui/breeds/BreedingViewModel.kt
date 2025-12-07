@@ -8,10 +8,14 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.palcompanion.PalCompanionApplication
 import com.example.palcompanion.data.repository.BreedingRepository
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class BreedingViewModel(breedingRepository: BreedingRepository) : ViewModel() {
     val breedingCombinations = breedingRepository.getBreedingCombinations()
+        .map { combinations ->
+            combinations.sortedWith(compareBy({ it.parent1 }, { it.parent2 }))
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     companion object {

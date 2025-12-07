@@ -51,8 +51,9 @@ class BreedsViewModel(
                 val validBreedingList = breedingList.filter {
                     it.parent1.isValidPalName() && it.parent2.isValidPalName() && it.child.isValidPalName()
                 }
+                val sortedList = validBreedingList.sortedWith(compareBy({ it.parent1 }, { it.parent2 }))
                 _breedsUiState.update {
-                    (it as BreedsUiState.Success).copy(breeds = validBreedingList, selectedNodeId = nodeId)
+                    (it as BreedsUiState.Success).copy(breeds = sortedList, selectedNodeId = nodeId)
                 }
             }
         }
