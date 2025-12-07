@@ -269,7 +269,7 @@ fun BreedingTreeScreen(
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
                     .padding(innerPadding)
-                    .padding(horizontal = 8.dp, vertical = 16.dp),
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
