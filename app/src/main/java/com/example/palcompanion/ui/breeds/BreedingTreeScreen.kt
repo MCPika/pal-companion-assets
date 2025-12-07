@@ -202,7 +202,7 @@ fun BreedingTreeScreen(
     BottomSheetScaffold(
         modifier = modifier,
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 0.dp, // collapsed height
+        sheetPeekHeight = 0.dp,
         sheetContent = {
             Box(
                 modifier = Modifier
@@ -228,7 +228,15 @@ fun BreedingTreeScreen(
                         items(combinations) { combination ->
                             BreedingCard(
                                 breeding = combination,
-                                onBreedingSelected = onBreedingSelected
+                                onBreedingSelected = {
+                                    // call original callback
+                                    onBreedingSelected(it)
+                                    // collapse the bottom sheet automatically
+                                    scope.launch {
+                                        scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
+                                        // OR: use scaffoldState.bottomSheetState.hide() for full hide
+                                    }
+                                }
                             )
                         }
                     }
@@ -261,7 +269,7 @@ fun BreedingTreeScreen(
                     onPalSelected = { palName, nodeId ->
                         onPalSelected(palName, nodeId)
                         scope.launch {
-                            scaffoldState.bottomSheetState.expand() // fully open on selection
+                            scaffoldState.bottomSheetState.expand()
                         }
                     },
                     isRoot = true,
@@ -281,7 +289,7 @@ fun BreedingTreeScreen(
                     onClick = {
                         onClearOne()
                         scope.launch {
-                            scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
+                            scaffoldState.bottomSheetState.partialExpand()
                         }
                     },
                     enabled = isClearOneEnabled
@@ -293,7 +301,7 @@ fun BreedingTreeScreen(
                     onClick = {
                         onClearAll()
                         scope.launch {
-                            scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
+                            scaffoldState.bottomSheetState.partialExpand()
                         }
                     }
                 ) {
@@ -303,6 +311,7 @@ fun BreedingTreeScreen(
         }
     }
 }
+
 
 @Composable
 fun BreedingTree(
