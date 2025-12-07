@@ -1,5 +1,9 @@
 package com.example.palcompanion.ui.breeds
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,18 +29,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -44,8 +53,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.palcompanion.data.Breeding
+import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
+import androidx.compose.ui.graphics.Path
 import kotlin.math.max
 
 data class PalNode(
@@ -53,6 +64,73 @@ data class PalNode(
     val parents: Pair<PalNode, PalNode>? = null,
     val id: String = UUID.randomUUID().toString()
 )
+
+// AnimPair used for animation state per node
+data class AnimPair(val x: Animatable<Float, AnimationVector1D>, val y: Animatable<Float, AnimationVector1D>)
+
+// MNode mirrors the measured tree; defined top-level so drawLinks can reference it
+data class MNode(
+    val node: PalNode,
+    val placeIndex: Int,
+    val width: Int,
+    val height: Int,
+    val children: List<MNode>,
+    var x: Float = 0f,
+    var y: Float = 0f
+)
+
+// Top-level draw function — must not be @Composable. Called from inside Canvas { }.
+fun DrawScope.drawLinks(
+    m: MNode,
+    anims: Map<String, AnimPair>,
+    verticalSpacingPx: Float
+) {
+    fun rec(node: MNode) {
+        val animParent = anims[node.node.id]!!
+        val pX = animParent.x.value
+        val pY = animParent.y.value
+        val parentCenterX = pX + node.width / 2f
+        val parentBottomY = pY + node.height
+
+        for (child in node.children) {
+            val animChild = anims[child.node.id]!!
+            val cX = animChild.x.value
+            val cY = animChild.y.value
+            val childCenterX = cX + child.width / 2f
+
+            // --- Draw connecting lines (unchanged except using safe vertical spacing) ---
+            val safeChildTop = kotlin.math.max(cY, parentBottomY + verticalSpacingPx)
+            val midY = (parentBottomY + safeChildTop) / 2f
+
+            drawLine(Color.White, Offset(parentCenterX, parentBottomY), Offset(parentCenterX, midY), 3.dp.toPx())
+            drawLine(Color.White, Offset(parentCenterX, midY), Offset(childCenterX, midY), 3.dp.toPx())
+            drawLine(Color.White, Offset(childCenterX, midY), Offset(childCenterX, safeChildTop), 3.dp.toPx())
+
+            // -------------------------------------------------------------------------
+            // ARROWHEAD → pointing UP into *PARENT ONLY*
+            // -------------------------------------------------------------------------
+            val arrowWidth = 10.dp.toPx()
+            val arrowHeight = 12.dp.toPx()
+
+            val arrowTipY = parentBottomY                   // tip touches parent bottom
+            val arrowBaseY = parentBottomY + arrowHeight    // base extends downward
+
+            val arrowPath = Path().apply {
+                moveTo(parentCenterX, arrowTipY)                // tip into parent
+                lineTo(parentCenterX - arrowWidth, arrowBaseY)  // bottom-left
+                lineTo(parentCenterX + arrowWidth, arrowBaseY)  // bottom-right
+                close()
+            }
+
+            drawPath(arrowPath, Color.White)
+
+            rec(child)
+        }
+    }
+
+    rec(m)
+}
+
 
 @Composable
 fun BreedingTreeRoute(
@@ -178,98 +256,142 @@ fun BreedingTreeScreen(
 }
 
 @Composable
-fun BreedingTree(node: PalNode, onPalSelected: (String, String) -> Unit, isRoot: Boolean, selectedNodeId: String?) {
-    val horizontalSpacing = 16.dp
-    val verticalSpacing = 40.dp
+fun BreedingTree(
+    node: PalNode,
+    onPalSelected: (String, String) -> Unit,
+    isRoot: Boolean,
+    selectedNodeId: String?,
+    horizontalSpacing: Dp = 24.dp,
+    verticalSpacing: Dp = 48.dp
+) {
+    val density = LocalDensity.current
+    val hSpacingPx = with(density) { horizontalSpacing.toPx() }
+    val vSpacingPx = with(density) { verticalSpacing.toPx() }
+
+    val anims = remember { mutableStateMapOf<String, AnimPair>() }
+    val coroutineScope = rememberCoroutineScope()
 
     SubcomposeLayout { constraints ->
-        val palNodePlaceable = subcompose("palNode") {
-            PalNode(
-                palName = node.palName,
-                isCrowned = isRoot,
-                size = if (isRoot) 80.dp else 40.dp,
-                onPalSelected = { onPalSelected(node.palName, node.id) },
-                isSelected = node.id == selectedNodeId
+
+        // 1) Measure - build measured tree
+        val placeables = mutableListOf<Placeable>()
+
+        fun measureNode(p: PalNode, depth: Int = 0): MNode {
+            val tag = "node-${p.id}"
+            val measuredPlaceable = subcompose(tag) {
+                PalNode(
+                    palName = p.palName,
+                    isCrowned = depth == 0 && isRoot,
+                    size = if (depth == 0 && isRoot) 80.dp else 40.dp,
+                    onPalSelected = { onPalSelected(p.palName, p.id) },
+                    isSelected = p.id == selectedNodeId
+                )
+            }.first().measure(constraints)
+
+            val index = placeables.size
+            placeables += measuredPlaceable
+
+            val children = if (p.parents != null) {
+                listOf(measureNode(p.parents.first, depth + 1), measureNode(p.parents.second, depth + 1))
+            } else emptyList()
+
+            // initialize anims entry if missing (values will be animated to targets later)
+            if (!anims.containsKey(p.id)) {
+                anims[p.id] = AnimPair(Animatable(0f), Animatable(0f))
+            }
+
+            return MNode(
+                node = p,
+                placeIndex = index,
+                width = measuredPlaceable.width,
+                height = measuredPlaceable.height,
+                children = children
             )
-        }.first().measure(constraints)
+        }
 
-        val parentPlaceables = subcompose("parents") {
-            node.parents?.let { (p1, p2) ->
-                BreedingTree(node = p1, onPalSelected = onPalSelected, isRoot = false, selectedNodeId = selectedNodeId)
-                BreedingTree(node = p2, onPalSelected = onPalSelected, isRoot = false, selectedNodeId = selectedNodeId)
+        val rootMeasured = measureNode(node)
+
+        // 2) Assign positions: children positioned relative to parent bottom + vSpacingPx
+        var cursor = 0f
+
+        fun assignPositions(m: MNode, parentBottom: Float? = null) {
+            m.y = if (parentBottom == null) 0f else parentBottom + vSpacingPx
+
+            if (m.children.isEmpty()) {
+                m.x = cursor
+                cursor += m.width + hSpacingPx
+            } else {
+                val bottom = m.y + m.height
+                m.children.forEach { assignPositions(it, bottom) }
+
+                val left = m.children.first()
+                val right = m.children.last()
+                val center = (left.x + (right.x + right.width)) / 2f
+                m.x = center - m.width / 2f
             }
-        }.map { it.measure(constraints) }
+        }
 
-        if (parentPlaceables.isEmpty()) {
-            layout(palNodePlaceable.width, palNodePlaceable.height) {
-                palNodePlaceable.placeRelative(0, 0)
+        assignPositions(rootMeasured, null)
+
+        // 3) Animate to targets (spring)
+        fun animateTree(m: MNode) {
+            val pair = anims[m.node.id]!!
+            coroutineScope.launch {
+                pair.x.animateTo(
+                    targetValue = m.x,
+                    animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioMediumBouncy)
+                )
             }
-        } else {
-            val p1 = parentPlaceables[0]
-            val p2 = parentPlaceables[1]
+            coroutineScope.launch {
+                pair.y.animateTo(
+                    targetValue = m.y,
+                    animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioMediumBouncy)
+                )
+            }
+            m.children.forEach { animateTree(it) }
+        }
+        animateTree(rootMeasured)
 
-            val p1Width = p1.width
-            val p2Width = p2.width
-            val horizontalSpacingPx = horizontalSpacing.toPx()
+        // 4) Compute layout bounds
+        fun computeBounds(m: MNode): Pair<Int, Int> {
+            var maxX = (m.x + m.width).toInt()
+            var maxY = (m.y + m.height).toInt()
+            m.children.forEach {
+                val (cx, cy) = computeBounds(it)
+                if (cx > maxX) maxX = cx
+                if (cy > maxY) maxY = cy
+            }
+            return maxX to maxY
+        }
 
-            val parentsWidth = p1Width + horizontalSpacingPx + p2Width
+        val (measuredW, measuredH) = computeBounds(rootMeasured)
 
-            val childX = (parentsWidth - palNodePlaceable.width) / 2f
+        val layoutW = measuredW.coerceAtLeast(constraints.minWidth)
+        val layoutH = measuredH.coerceAtLeast(constraints.minHeight)
 
-            val width = max(parentsWidth, palNodePlaceable.width.toFloat()).toInt()
-            val height = (palNodePlaceable.height + verticalSpacing.toPx() + max(p1.height, p2.height)).toInt()
-
+        // 5) Layout: draw canvas + place nodes
+        layout(layoutW, layoutH) {
+            // draw connections in a canvas subcompose (reads animated positions)
             val canvasPlaceable = subcompose("canvas") {
-                Canvas(modifier = Modifier.size(width.toDp(), height.toDp())) {
-                    val childBottomY = palNodePlaceable.height.toFloat()
-                    val parentsTopY = palNodePlaceable.height + verticalSpacing.toPx()
-                    val middleY = (childBottomY + parentsTopY) / 2f
-
-                    val childCenterX = childX + palNodePlaceable.width / 2f
-                    val parent1CenterX = p1Width / 2f
-                    val parent2CenterX = p1Width + horizontalSpacingPx + p2Width / 2f
-
-                    // Vertical Line from child to T-junction
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(childCenterX, childBottomY),
-                        end = Offset(childCenterX, middleY),
-                        strokeWidth = 2.dp.toPx()
-                    )
-
-                    // Horizontal T-junction line
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(parent1CenterX, middleY),
-                        end = Offset(parent2CenterX, middleY),
-                        strokeWidth = 2.dp.toPx()
-                    )
-
-                    // Lines down to parents
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(parent1CenterX, middleY),
-                        end = Offset(parent1CenterX, parentsTopY),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(parent2CenterX, middleY),
-                        end = Offset(parent2CenterX, parentsTopY),
-                        strokeWidth = 2.dp.toPx()
-                    )
+                Canvas(modifier = Modifier.size(with(density) { layoutW.toDp() }, with(density) { layoutH.toDp() })) {
+                    // call top-level drawLinks (DrawScope receiver)
+                    drawLinks(rootMeasured, anims, vSpacingPx)
                 }
-            }.first().measure(Constraints.fixed(width, height))
+            }.first().measure(Constraints.fixed(layoutW, layoutH))
 
-            layout(width, height) {
-                canvasPlaceable.placeRelative(0, 0)
-                palNodePlaceable.placeRelative(childX.toInt(), 0)
-                p1.placeRelative(0, palNodePlaceable.height + verticalSpacing.toPx().toInt())
-                p2.placeRelative(p1Width + horizontalSpacing.toPx().toInt(), palNodePlaceable.height + verticalSpacing.toPx().toInt())
+            canvasPlaceable.place(0, 0)
+
+            // place nodes at current animated positions
+            fun placeRec(m: MNode) {
+                val a = anims[m.node.id]!!
+                placeables[m.placeIndex].place(a.x.value.toInt(), a.y.value.toInt())
+                m.children.forEach { placeRec(it) }
             }
+            placeRec(rootMeasured)
         }
     }
 }
+
 
 @Composable
 fun PalNode(
