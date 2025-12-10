@@ -128,13 +128,22 @@ fun PalCompanionApp() {
         ) {
             Scaffold(
                 topBar = {
-                    PalAppBar(title = "", onMenuClicked = {
-                        scope.launch {
-                            drawerState.apply {
-                                if (isClosed) open() else close()
+                    val topRoutes = navItems.map { it.route }
+                    PalAppBar(
+                        title = "",
+                        onMenuClicked = {
+                            scope.launch {
+                                drawerState.apply {
+                                    if (isClosed) open() else close()
+                                }
                             }
+                        },
+                        onBackClicked = if (currentRoute != null && !topRoutes.contains(currentRoute)) {
+                            { navController.popBackStack() }
+                        } else {
+                            null
                         }
-                    })
+                    )
                 }
             ) { innerPadding ->
                 PalCompanionNavHost(

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.DropdownMenuItem
@@ -47,8 +48,7 @@ fun FarmPalScreen(
     Column(modifier = modifier) {
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.padding(8.dp)
+            onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
                 value = selectedFarmDrop ?: "",
@@ -67,6 +67,8 @@ fun FarmPalScreen(
                 modifier = Modifier
                     .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                     .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp),
+                shape = RoundedCornerShape(16.dp),
             )
             ExposedDropdownMenu(
                 expanded = expanded,
