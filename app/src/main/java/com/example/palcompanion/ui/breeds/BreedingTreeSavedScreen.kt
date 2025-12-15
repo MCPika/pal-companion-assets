@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -28,19 +28,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.palcompanion.data.SavedBreedingTree
+import com.example.palcompanion.ui.PalCompanionRoute
 import com.google.gson.Gson
 import java.util.Locale
 
 @Composable
 fun BreedingTreeSavedScreen(
     modifier: Modifier = Modifier,
-    viewModel: BreedingTreeSavedViewModel = viewModel(factory = BreedingTreeSavedViewModel.Factory)
+    viewModel: BreedingTreeSavedViewModel = viewModel(factory = BreedingTreeSavedViewModel.Factory),
+    navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -55,13 +59,20 @@ fun BreedingTreeSavedScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Button(
                         onClick = { viewModel.toggleSelectionMode() },
                     ) {
                         Text(text = if (state.isSelectionMode) "Cancel" else "Select")
+                    }
+                    if (state.isSelectionMode) {
+                        Button(
+                            onClick = { viewModel.selectAllTrees() },
+                        ) {
+                            Text(text = "Select All")
+                        }
                     }
                     Button(
                         onClick = { viewModel.deleteSelectedTrees() },
@@ -73,22 +84,26 @@ fun BreedingTreeSavedScreen(
 
                 if (state.savedTrees.isEmpty()) {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(text = "No saved breeding trees found.")
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.weight(1f).padding(start = 8.dp, end = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(state.savedTrees) { savedTree ->
+                        itemsIndexed(state.savedTrees) { index, savedTree ->
                             SavedBreedingTreeItem(
                                 savedTree = savedTree,
+                                index = index + 1,
                                 isSelectionMode = state.isSelectionMode,
                                 isSelected = state.selectedIds.contains(savedTree.id),
-                                onToggleSelection = { viewModel.toggleTreeSelection(savedTree.id) }
+                                onToggleSelection = { viewModel.toggleTreeSelection(savedTree.id) },
+                                onCardClicked = {
+                                    navController.navigate(PalCompanionRoute.ViewSavedTree.createRoute(savedTree.treeJson))
+                                }
                             )
                         }
                     }
@@ -101,18 +116,26 @@ fun BreedingTreeSavedScreen(
 @Composable
 fun SavedBreedingTreeItem(
     savedTree: SavedBreedingTree,
+    index: Int,
     isSelectionMode: Boolean,
     isSelected: Boolean,
-    onToggleSelection: () -> Unit
+    onToggleSelection: () -> Unit,
+    onCardClicked: () -> Unit
 ) {
     val palNode = Gson().fromJson(savedTree.treeJson, PalNode::class.java)
-    val branchCount = countNodes(palNode) - 1
+    val breedingSteps = countBreedingSteps(palNode)
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, Color.White, MaterialTheme.shapes.medium)
-            .clickable(enabled = isSelectionMode) { onToggleSelection() }
+            .clickable {
+                if (isSelectionMode) {
+                    onToggleSelection()
+                } else {
+                    onCardClicked()
+                }
+            }
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -153,22 +176,28 @@ fun SavedBreedingTreeItem(
                     text = formattedPalName,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold
                 )
-                Text(text = "Branches: $branchCount")
+                Text(
+                    text = "Breeding Steps: $breedingSteps",
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             Spacer(Modifier.width(16.dp))
 
             Text(
-                text = "#${savedTree.id}",
+                text = "#$index",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Bold
             )
         }
     }
 }
 
-fun countNodes(node: PalNode): Int {
-    return 1 + (node.parents?.let { countNodes(it.first) + countNodes(it.second) } ?: 0)
+fun countBreedingSteps(node: PalNode): Int {
+    val count = if (node.parents != null) 1 else 0
+    return count + (node.parents?.let { countBreedingSteps(it.first) + countBreedingSteps(it.second) } ?: 0)
 }

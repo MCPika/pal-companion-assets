@@ -19,13 +19,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -53,6 +57,7 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -151,7 +156,7 @@ fun BreedingTreeRoute(
         viewModel.eventChannel.collectLatest { event ->
             when (event) {
                 is BreedsViewEvent.TreeSaved -> {
-                    snackbarHostState.showSnackbar("Pal Tree successfully saved.")
+                    snackbarHostState.showSnackbar("Pal breeding tree has been saved.")
                 }
             }
         }
@@ -218,129 +223,154 @@ fun BreedingTreeScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
 
-    BottomSheetScaffold(
-        modifier = modifier,
-        scaffoldState = scaffoldState,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.9f)
-                    .background(Color.DarkGray),
-            ) {
-                if (combinations.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Select a Pal to see breeding combinations.",
-                            color = Color.White
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.padding(vertical = 2.dp),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        items(combinations) { combination ->
-                            BreedingCard(
-                                breeding = combination,
-                                onBreedingSelected = {
-                                    // call original callback
-                                    onBreedingSelected(it)
-                                    // collapse the bottom sheet automatically
-                                    scope.launch {
-                                        scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
-                                        // OR: use scaffoldState.bottomSheetState.hide() for full hide
-                                    }
-                                }
+    Box(modifier = Modifier.fillMaxSize()) {
+        BottomSheetScaffold(
+            modifier = modifier,
+            scaffoldState = scaffoldState,
+            sheetPeekHeight = 0.dp,
+            sheetContent = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.9f)
+                        .background(Color.DarkGray),
+                ) {
+                    if (combinations.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Select a Pal to see breeding combinations.",
+                                color = Color.White
                             )
                         }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.padding(vertical = 2.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            items(combinations) { combination ->
+                                BreedingCard(
+                                    breeding = combination,
+                                    onBreedingSelected = {
+                                        // call original callback
+                                        onBreedingSelected(it)
+                                        // collapse the bottom sheet automatically
+                                        scope.launch {
+                                            scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
+                                            // OR: use scaffoldState.bottomSheetState.hide() for full hide
+                                        }
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectTransformGestures { _, pan, zoom, _ ->
-                        scale = max(0.5f, scale * zoom)
-                        offsetX += pan.x
-                        offsetY += pan.y
-                    }
-                },
-            contentAlignment = Alignment.Center
-        ) {
+        ) { innerPadding ->
             Box(
-                modifier = Modifier.graphicsLayer(
-                    scaleX = scale,
-                    scaleY = scale,
-                    translationX = offsetX,
-                    translationY = offsetY
-                )
-            ) {
-                BreedingTree(
-                    node = rootNode,
-                    onPalSelected = { palName, nodeId ->
-                        onPalSelected(palName, nodeId)
-                        scope.launch {
-                            scaffoldState.bottomSheetState.expand()
-                        }
-                    },
-                    isRoot = true,
-                    selectedNodeId = selectedNodeId
-                )
-            }
-
-            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(innerPadding)
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            scale = max(0.5f, scale * zoom)
+                            offsetX += pan.x
+                            offsetY += pan.y
+                        }
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                Button(
-                    onClick = {
-                        onClearOne()
-                        scope.launch {
-                            scaffoldState.bottomSheetState.partialExpand()
-                        }
-                    },
-                    enabled = isClearOneEnabled
+                Box(
+                    modifier = Modifier.graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offsetX,
+                        translationY = offsetY
+                    )
                 ) {
-                    Text(text = "Clear One")
+                    BreedingTree(
+                        node = rootNode,
+                        onPalSelected = { palName, nodeId ->
+                            onPalSelected(palName, nodeId)
+                            scope.launch {
+                                scaffoldState.bottomSheetState.expand()
+                            }
+                        },
+                        isRoot = true,
+                        selectedNodeId = selectedNodeId
+                    )
                 }
 
-                Button(
-                    onClick = {
-                        onSaveTree()
-                        scope.launch {
-                            scaffoldState.bottomSheetState.partialExpand()
-                        }
-                    },
-                    enabled = isSaveTreeEnabled
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(innerPadding)
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Save Tree")
-                }
-
-                Button(
-                    onClick = {
-                        onClearAll()
-                        scope.launch {
-                            scaffoldState.bottomSheetState.partialExpand()
-                        }
+                    Button(
+                        onClick = {
+                            onClearOne()
+                            scope.launch {
+                                scaffoldState.bottomSheetState.partialExpand()
+                            }
+                        },
+                        enabled = isClearOneEnabled
+                    ) {
+                        Text(text = "Clear One")
                     }
-                ) {
-                    Text(text = "Clear All")
+
+                    Button(
+                        onClick = {
+                            onSaveTree()
+                            scope.launch {
+                                scaffoldState.bottomSheetState.partialExpand()
+                            }
+                        },
+                        enabled = isSaveTreeEnabled
+                    ) {
+                        Text(text = "Save Tree")
+                    }
+
+                    Button(
+                        onClick = {
+                            onClearAll()
+                            scope.launch {
+                                scaffoldState.bottomSheetState.partialExpand()
+                            }
+                        }
+                    ) {
+                        Text(text = "Clear All")
+                    }
                 }
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .wrapContentWidth(),
+            snackbar = { snackbarData ->
+                Card(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .border(1.dp, Color.White, MaterialTheme.shapes.medium),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                ) {
+                    Text(
+                        text = snackbarData.visuals.message,
+                        modifier = Modifier.padding(16.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        )
     }
 }
 

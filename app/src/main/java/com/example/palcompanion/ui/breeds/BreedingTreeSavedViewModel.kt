@@ -54,6 +54,17 @@ class BreedingTreeSavedViewModel(private val breedingRepository: BreedingReposit
         }
     }
 
+    fun selectAllTrees() {
+        _uiState.update {
+            if (it is BreedingTreeSavedUiState.Success) {
+                val allIds = it.savedTrees.map { tree -> tree.id }.toSet()
+                it.copy(selectedIds = allIds)
+            } else {
+                it
+            }
+        }
+    }
+
     fun deleteSelectedTrees() {
         viewModelScope.launch {
             val currentState = _uiState.value

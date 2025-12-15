@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.palcompanion.ui.breeds.BreedingTreeSavedScreen
 import com.example.palcompanion.ui.breeds.BreedsRoute
 import com.example.palcompanion.ui.breeds.BreedingTreeRoute
+import com.example.palcompanion.ui.breeds.ViewSavedTreeScreen
 
 sealed class PalCompanionRoute(val route: String) {
     object PalList : PalCompanionRoute("pal_list")
@@ -26,6 +27,9 @@ sealed class PalCompanionRoute(val route: String) {
 
     object FarmPal : PalCompanionRoute("farm_pal")
     object BreedingTreeSaved : PalCompanionRoute("breeding_tree_saved")
+    object ViewSavedTree : PalCompanionRoute("view_saved_tree/{treeJson}") {
+        fun createRoute(treeJson: String) = "view_saved_tree/$treeJson"
+    }
 }
 
 @Composable
@@ -80,7 +84,16 @@ fun PalCompanionNavHost(
             FarmPalScreen(navController = navController)
         }
         composable(PalCompanionRoute.BreedingTreeSaved.route) {
-            BreedingTreeSavedScreen()
+            BreedingTreeSavedScreen(navController = navController)
+        }
+        composable(
+            route = PalCompanionRoute.ViewSavedTree.route,
+            arguments = listOf(navArgument("treeJson") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val treeJson = backStackEntry.arguments?.getString("treeJson")
+            if (treeJson != null) {
+                ViewSavedTreeScreen(treeJson = treeJson)
+            }
         }
     }
 }
