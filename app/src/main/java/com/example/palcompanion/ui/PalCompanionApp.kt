@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +53,8 @@ data class NavItem(
 
 val navItems = listOf(
     NavItem("Listing of Pals", Icons.AutoMirrored.Filled.List, PalCompanionRoute.PalList.route),
-    NavItem("Farming Pals", Icons.Default.Home, PalCompanionRoute.FarmPal.route)
+    NavItem("Farming Pals", Icons.Default.Home, PalCompanionRoute.FarmPal.route),
+    NavItem("Breeding Tree Saved", Icons.Default.Save, PalCompanionRoute.BreedingTreeSaved.route)
 )
 
 @Composable

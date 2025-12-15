@@ -8,11 +8,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.material3.Button
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,9 +23,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -58,11 +60,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.palcompanion.data.Breeding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
 import kotlin.math.max
-import androidx.compose.material3.SheetValue
 
 data class PalNode(
     val palName: String,
@@ -143,6 +145,17 @@ fun BreedingTreeRoute(
     viewModel: BreedsViewModel = viewModel(factory = BreedsViewModel.Factory)
 ) {
     val uiState by viewModel.breedsUiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(viewModel.eventChannel) {
+        viewModel.eventChannel.collectLatest { event ->
+            when (event) {
+                is BreedsViewEvent.TreeSaved -> {
+                    snackbarHostState.showSnackbar("Pal Tree successfully saved.")
+                }
+            }
+        }
+    }
 
     when (val currentState = uiState) {
         is BreedsUiState.Loading -> {
@@ -172,8 +185,11 @@ fun BreedingTreeRoute(
                 onPalSelected = { palName, nodeId -> viewModel.getBreedsForPal(palName, nodeId) },
                 onClearOne = { viewModel.clearNode(currentState.selectedNodeId ?: "") },
                 onClearAll = { viewModel.clearAll() },
+                onSaveTree = { viewModel.saveTree() },
                 isClearOneEnabled = currentState.selectedNodeId != null && currentState.selectedNodeId != currentState.rootNode.id,
-                selectedNodeId = currentState.selectedNodeId
+                isSaveTreeEnabled = currentState.rootNode.parents != null,
+                selectedNodeId = currentState.selectedNodeId,
+                snackbarHostState = snackbarHostState
             )
         }
     }
@@ -189,8 +205,11 @@ fun BreedingTreeScreen(
     onPalSelected: (String, String) -> Unit,
     onClearOne: () -> Unit,
     onClearAll: () -> Unit,
+    onSaveTree: () -> Unit,
     isClearOneEnabled: Boolean,
-    selectedNodeId: String?
+    isSaveTreeEnabled: Boolean,
+    selectedNodeId: String?,
+    snackbarHostState: SnackbarHostState
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
     var offsetX by remember { mutableFloatStateOf(0f) }
@@ -202,6 +221,7 @@ fun BreedingTreeScreen(
     BottomSheetScaffold(
         modifier = modifier,
         scaffoldState = scaffoldState,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         sheetPeekHeight = 0.dp,
         sheetContent = {
             Box(
@@ -295,6 +315,18 @@ fun BreedingTreeScreen(
                     enabled = isClearOneEnabled
                 ) {
                     Text(text = "Clear One")
+                }
+
+                Button(
+                    onClick = {
+                        onSaveTree()
+                        scope.launch {
+                            scaffoldState.bottomSheetState.partialExpand()
+                        }
+                    },
+                    enabled = isSaveTreeEnabled
+                ) {
+                    Text(text = "Save Tree")
                 }
 
                 Button(

@@ -12,8 +12,10 @@ import com.example.palcompanion.PalCompanionApplication
 import com.example.palcompanion.data.Breeding
 import com.example.palcompanion.data.repository.BreedingRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,6 +26,10 @@ sealed interface BreedsUiState {
     object Loading : BreedsUiState
 }
 
+sealed interface BreedsViewEvent {
+    object TreeSaved : BreedsViewEvent
+}
+
 class BreedsViewModel(
     private val breedingRepository: BreedingRepository,
     savedStateHandle: SavedStateHandle
@@ -31,6 +37,9 @@ class BreedsViewModel(
 
     private val _breedsUiState = MutableStateFlow<BreedsUiState>(BreedsUiState.Loading)
     val breedsUiState: StateFlow<BreedsUiState> = _breedsUiState.asStateFlow()
+
+    private val _eventChannel = MutableSharedFlow<BreedsViewEvent>()
+    val eventChannel = _eventChannel.asSharedFlow()
 
     private val initialPalName: String = savedStateHandle.get<String>("palName") ?: ""
 
@@ -88,6 +97,18 @@ class BreedsViewModel(
         if (currentState is BreedsUiState.Success) {
             val newRoot = removeSubtree(currentState.rootNode, nodeId)
             _breedsUiState.value = currentState.copy(rootNode = newRoot)
+        }
+    }
+
+    fun saveTree() {
+        viewModelScope.launch {
+            val currentState = _breedsUiState.value
+            if (currentState is BreedsUiState.Success) {
+                if (currentState.rootNode.parents != null) {
+                    breedingRepository.saveTree(currentState.rootNode)
+                    _eventChannel.emit(BreedsViewEvent.TreeSaved)
+                }
+            }
         }
     }
 

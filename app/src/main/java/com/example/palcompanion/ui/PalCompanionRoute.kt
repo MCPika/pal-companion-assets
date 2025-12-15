@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.palcompanion.ui.breeds.BreedingTreeSavedScreen
 import com.example.palcompanion.ui.breeds.BreedsRoute
 import com.example.palcompanion.ui.breeds.BreedingTreeRoute
 
@@ -24,6 +25,7 @@ sealed class PalCompanionRoute(val route: String) {
     }
 
     object FarmPal : PalCompanionRoute("farm_pal")
+    object BreedingTreeSaved : PalCompanionRoute("breeding_tree_saved")
 }
 
 @Composable
@@ -76,6 +78,9 @@ fun PalCompanionNavHost(
         }
         composable(PalCompanionRoute.FarmPal.route) {
             FarmPalScreen(navController = navController)
+        }
+        composable(PalCompanionRoute.BreedingTreeSaved.route) {
+            BreedingTreeSavedScreen()
         }
     }
 }
