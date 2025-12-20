@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.net.URL
 
 interface AppContainer {
     val breedingRepository: BreedingRepository
@@ -37,7 +38,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
                 super.onCreate(db)
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val jsonString = context.assets.open("breeding.json").bufferedReader().use { it.readText() }
+                        val jsonString = URL("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/breeding.json").readText()
                         val json = Json { ignoreUnknownKeys = true }
                         val breedingMap = json.decodeFromString<Map<String, List<ParentPair>>>(jsonString)
                         val breedingList = mutableListOf<BreedingCombination>()

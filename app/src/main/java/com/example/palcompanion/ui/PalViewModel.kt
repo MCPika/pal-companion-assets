@@ -1,13 +1,14 @@
 package com.example.palcompanion.ui
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.palcompanion.data.Breeding
+import com.example.palcompanion.PalCompanionApplication
 import com.example.palcompanion.data.Datasource
+import com.example.palcompanion.data.repository.BreedingRepository
 import com.example.palcompanion.model.Pal
 import com.example.palcompanion.model.PalElement
 import com.example.palcompanion.model.WorkSuitability
@@ -15,15 +16,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class PalViewModel(application: Application) : AndroidViewModel(application) {
+class PalViewModel(
+    private val application: Application,
+    private val breedingRepository: BreedingRepository
+) : ViewModel() {
 
     private val _pals = MutableStateFlow<List<Pal>>(emptyList())
     val pals: StateFlow<List<Pal>> = _pals.asStateFlow()
 
-    private val _breedingCombos = MutableStateFlow<Map<String, List<Breeding>>>(emptyMap())
-    val breedingCombos: StateFlow<Map<String, List<Breeding>>> = _breedingCombos.asStateFlow()
+    private val _breedingCombos = MutableStateFlow<Map<String, List<com.example.palcompanion.data.Breeding>>>(emptyMap())
+    val breedingCombos: StateFlow<Map<String, List<com.example.palcompanion.data.Breeding>>> = _breedingCombos.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -92,7 +97,7 @@ class PalViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun loadPals() {
         viewModelScope.launch {
-            allPals = Datasource(getApplication()).loadPals()
+            allPals = Datasource(application).loadPals()
             _pals.value = allPals
             _isLoading.value = false
         }
@@ -100,7 +105,11 @@ class PalViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun loadBreedingCombos() {
         viewModelScope.launch {
-            _breedingCombos.value = Datasource(getApplication()).loadBreedingCombos()
+            val breedingCombinations = breedingRepository.getBreedingCombinations().first()
+            val combosMap = breedingCombinations.groupBy { it.child }.mapValues { (_, value) ->
+                value.map { com.example.palcompanion.data.Breeding(it.parent1, it.parent2, it.child) }
+            }
+            _breedingCombos.value = combosMap
         }
     }
 
@@ -160,8 +169,8 @@ class PalViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application)
-                PalViewModel(application)
+                val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as PalCompanionApplication)
+                PalViewModel(application, application.container.breedingRepository)
             }
         }
     }

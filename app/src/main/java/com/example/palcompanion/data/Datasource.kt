@@ -132,36 +132,6 @@ class Datasource(private val context: Context) {
         return pals
     }
 
-    fun loadBreedingCombos(): Map<String, List<Breeding>> {
-        val breedingCombos = mutableMapOf<String, MutableList<Breeding>>()
-        try {
-            val jsonString = context.assets.open("breeding.json").bufferedReader().use { it.readText() }
-            val jsonObject = JSONObject(jsonString)
-            val keys = jsonObject.keys()
-            while (keys.hasNext()) {
-                val palName = keys.next()
-                val combosArray = jsonObject.getJSONArray(palName)
-                val combos = mutableListOf<Breeding>()
-                for (i in 0 until combosArray.length()) {
-                    val comboObject = combosArray.getJSONObject(i)
-                    combos.add(
-                        Breeding(
-                            parent1 = comboObject.getString("parent1"),
-                            parent2 = comboObject.getString("parent2"),
-                            child = comboObject.getString("child")
-                        )
-                    )
-                }
-                breedingCombos[palName] = combos
-            }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-        } catch (jsonException: JSONException) {
-            jsonException.printStackTrace()
-        }
-        return breedingCombos
-    }
-
     fun loadWorkSuitabilityFilters(): List<Filter> {
         return WorkSuitability.entries.map { 
             Filter(
