@@ -46,7 +46,7 @@ fun PalAppBar(
         IconButton(
             onClick = onMenuClicked,
             modifier = Modifier
-                .align(Alignment.TopStart)
+                .align(Alignment.CenterStart)
                 .padding(top = 24.dp, start = 16.dp)
                 .background(
                     color = Color.Black.copy(alpha = 0.5f),
@@ -63,7 +63,7 @@ fun PalAppBar(
             IconButton(
                 onClick = onBackClicked,
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
+                    .align(Alignment.CenterEnd)
                     .padding(top = 24.dp, end = 16.dp)
                     .background(
                         color = Color.Black.copy(alpha = 0.5f),

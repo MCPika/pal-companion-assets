@@ -23,17 +23,17 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -220,19 +220,78 @@ fun BreedingTreeScreen(
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
 
-    val scaffoldState = rememberBottomSheetScaffoldState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showSheet by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        BottomSheetScaffold(
-            modifier = modifier,
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = 0.dp,
-            sheetContent = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTransformGestures { _, pan, zoom, _ ->
+                        scale = max(0.5f, scale * zoom)
+                        offsetX += pan.x
+                        offsetY += pan.y
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier.graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale,
+                    translationX = offsetX,
+                    translationY = offsetY
+                )
+            ) {
+                BreedingTree(
+                    node = rootNode,
+                    onPalSelected = { palName, nodeId ->
+                        onPalSelected(palName, nodeId)
+                        showSheet = true
+                    },
+                    isRoot = true,
+                    selectedNodeId = selectedNodeId
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = onClearOne,
+                    enabled = isClearOneEnabled
+                ) {
+                    Text(text = "Clear One")
+                }
+
+                Button(
+                    onClick = onSaveTree,
+                    enabled = isSaveTreeEnabled
+                ) {
+                    Text(text = "Save Tree")
+                }
+
+                Button(onClick = onClearAll) {
+                    Text(text = "Clear All")
+                }
+            }
+        }
+
+        if (showSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showSheet = false },
+                sheetState = sheetState,
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(0.9f)
+                        .fillMaxHeight(0.75f)
                         .background(Color.DarkGray),
                 ) {
                     if (combinations.isEmpty()) {
@@ -254,95 +313,16 @@ fun BreedingTreeScreen(
                                 BreedingCard(
                                     breeding = combination,
                                     onBreedingSelected = {
-                                        // call original callback
                                         onBreedingSelected(it)
-                                        // collapse the bottom sheet automatically
-                                        scope.launch {
-                                            scaffoldState.bottomSheetState.partialExpand() // collapse to peek height
-                                            // OR: use scaffoldState.bottomSheetState.hide() for full hide
+                                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                            if (!sheetState.isVisible) {
+                                                showSheet = false
+                                            }
                                         }
                                     }
                                 )
                             }
                         }
-                    }
-                }
-            }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectTransformGestures { _, pan, zoom, _ ->
-                            scale = max(0.5f, scale * zoom)
-                            offsetX += pan.x
-                            offsetY += pan.y
-                        }
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier.graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offsetX,
-                        translationY = offsetY
-                    )
-                ) {
-                    BreedingTree(
-                        node = rootNode,
-                        onPalSelected = { palName, nodeId ->
-                            onPalSelected(palName, nodeId)
-                            scope.launch {
-                                scaffoldState.bottomSheetState.expand()
-                            }
-                        },
-                        isRoot = true,
-                        selectedNodeId = selectedNodeId
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(innerPadding)
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Button(
-                        onClick = {
-                            onClearOne()
-                            scope.launch {
-                                scaffoldState.bottomSheetState.partialExpand()
-                            }
-                        },
-                        enabled = isClearOneEnabled
-                    ) {
-                        Text(text = "Clear One")
-                    }
-
-                    Button(
-                        onClick = {
-                            onSaveTree()
-                            scope.launch {
-                                scaffoldState.bottomSheetState.partialExpand()
-                            }
-                        },
-                        enabled = isSaveTreeEnabled
-                    ) {
-                        Text(text = "Save Tree")
-                    }
-
-                    Button(
-                        onClick = {
-                            onClearAll()
-                            scope.launch {
-                                scaffoldState.bottomSheetState.partialExpand()
-                            }
-                        }
-                    ) {
-                        Text(text = "Clear All")
                     }
                 }
             }
