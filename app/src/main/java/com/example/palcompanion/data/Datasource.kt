@@ -9,19 +9,24 @@ import com.example.palcompanion.model.PalElement
 import com.example.palcompanion.model.PalWorkSuitability
 import com.example.palcompanion.model.PartnerSkill
 import com.example.palcompanion.model.WorkSuitability
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.net.URL
 
 class Datasource(private val context: Context) {
 
     private val palImageUrlBase = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/"
 
-    fun loadPals(): List<Pal> {
+    suspend fun loadPals(): List<Pal> {
         val pals = mutableListOf<Pal>()
         try {
-            val jsonString = context.assets.open("pals.json").bufferedReader().use { it.readText() }
+            val jsonString = withContext(Dispatchers.IO) {
+                URL("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals.json").readText()
+            }
             val jsonArray = JSONArray(jsonString)
             for (i in 0 until jsonArray.length()) {
                 val jsonObject = jsonArray.getJSONObject(i)

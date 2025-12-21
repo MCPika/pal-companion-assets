@@ -20,6 +20,7 @@ import java.net.URL
 
 interface AppContainer {
     val breedingRepository: BreedingRepository
+    val datasource: Datasource
 }
 
 @Serializable
@@ -32,13 +33,14 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             AppDatabase::class.java,
             "pal_companion.db"
         )
+            .fallbackToDestructiveMigration(false)
         .addMigrations(MIGRATION_1_2)
         .addCallback(object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val jsonString = URL("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/breeding.json").readText()
+                        val jsonString = URL("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@5b7f703/breeding.json").readText()
                         val json = Json { ignoreUnknownKeys = true }
                         val breedingMap = json.decodeFromString<Map<String, List<ParentPair>>>(jsonString)
                         val breedingList = mutableListOf<BreedingCombination>()
@@ -66,6 +68,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val breedingRepository: BreedingRepository by lazy {
         DefaultBreedingRepository(database.breedingCombinationDao(), database.savedBreedingTreeDao())
+    }
+
+    override val datasource: Datasource by lazy {
+        Datasource(context)
     }
 
     companion object {

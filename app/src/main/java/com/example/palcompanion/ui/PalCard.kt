@@ -30,8 +30,13 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.palcompanion.R
-import com.example.palcompanion.data.Datasource
+import com.example.palcompanion.model.ActiveSkill
+import com.example.palcompanion.model.Drop
 import com.example.palcompanion.model.Pal
+import com.example.palcompanion.model.PalElement
+import com.example.palcompanion.model.PalWorkSuitability
+import com.example.palcompanion.model.PartnerSkill
+import com.example.palcompanion.model.WorkSuitability
 
 @Composable
 fun PalListItem(pal: Pal, onPalClicked: (Pal) -> Unit) {
@@ -111,8 +116,25 @@ fun PalItem(pal: Pal, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun PalListItemPreview() {
-    val previewPals = Datasource(LocalContext.current).loadPals()
-    if (previewPals.isNotEmpty()) {
-        PalListItem(pal = previewPals.first(), onPalClicked = {})
-    }
+    val previewPal = Pal(
+        id = "001",
+        name = "Lamball",
+        elements = listOf(PalElement.NORMAL),
+        workSuitability = listOf(
+            PalWorkSuitability(WorkSuitability.HANDIWORK, 1),
+            PalWorkSuitability(WorkSuitability.TRANSPORTING, 1),
+            PalWorkSuitability(WorkSuitability.FARMING, 1)
+        ),
+        imageUrl = "",
+        description = "A fluffy, spherical pal that is famously docile. If it gets attacked, it will flee with all its might, but may fall and roll away.",
+        partnerSkill = PartnerSkill(name = "Fluffy Shield", description = "When activated, equips a fluffy shield to the player."),
+        drops = listOf(
+            Drop(name = "Wool", quantity = "1-2", rate = "100%"),
+            Drop(name = "Lamball Mutton", quantity = "1", rate = "100%")
+        ),
+        activeSkills = listOf(
+            ActiveSkill(level = 1, name = "Roly Poly", description = "Curses a targeted enemy with negative status effects.", cooldown = 1, power = 10, element = PalElement.NORMAL)
+        )
+    )
+    PalListItem(pal = previewPal, onPalClicked = {})
 }

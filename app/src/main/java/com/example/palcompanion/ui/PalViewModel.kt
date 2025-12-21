@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class PalViewModel(
-    private val application: Application,
+    private val datasource: Datasource,
     private val breedingRepository: BreedingRepository
 ) : ViewModel() {
 
@@ -97,7 +97,7 @@ class PalViewModel(
 
     private fun loadPals() {
         viewModelScope.launch {
-            allPals = Datasource(application).loadPals()
+            allPals = datasource.loadPals()
             _pals.value = allPals
             _isLoading.value = false
         }
@@ -170,7 +170,7 @@ class PalViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as PalCompanionApplication)
-                PalViewModel(application, application.container.breedingRepository)
+                PalViewModel(application.container.datasource, application.container.breedingRepository)
             }
         }
     }
