@@ -7,6 +7,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.palcompanion.Constants
 import com.example.palcompanion.data.repository.BreedingRepository
 import com.example.palcompanion.data.repository.DefaultBreedingRepository
 import kotlinx.coroutines.CoroutineScope
@@ -36,11 +37,12 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             .fallbackToDestructiveMigration(false)
         .addMigrations(MIGRATION_1_2)
         .addCallback(object : RoomDatabase.Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val jsonString = URL("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@5b7f703/breeding.json").readText()
+                        database.breedingCombinationDao().deleteAll()
+                        val jsonString = URL(Constants.BREEDING_JSON_URL).readText()
                         val json = Json { ignoreUnknownKeys = true }
                         val breedingMap = json.decodeFromString<Map<String, List<ParentPair>>>(jsonString)
                         val breedingList = mutableListOf<BreedingCombination>()

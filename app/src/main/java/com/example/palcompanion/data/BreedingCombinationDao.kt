@@ -16,4 +16,7 @@ interface BreedingCombinationDao {
 
     @Query("SELECT * FROM breeding_combinations WHERE child = :childName")
     fun findByChildName(childName: String): Flow<List<BreedingCombination>>
+
+    @Query("DELETE FROM breeding_combinations")
+    suspend fun deleteAll()
 }

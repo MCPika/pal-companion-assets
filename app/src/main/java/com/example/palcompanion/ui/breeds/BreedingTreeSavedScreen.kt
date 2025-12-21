@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.palcompanion.Constants
 import com.example.palcompanion.data.SavedBreedingTree
 import com.example.palcompanion.ui.PalCompanionRoute
 import com.google.gson.Gson
@@ -152,7 +153,7 @@ fun SavedBreedingTreeItem(
             val imageName = savedTree.rootPalName.replace(' ', '_').lowercase()
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/${imageName}.webp")
+                    .data("${Constants.PALS_IMAGE_URL}/${imageName}.webp")
                     .crossfade(true)
                     .build(),
                 contentDescription = savedTree.rootPalName,

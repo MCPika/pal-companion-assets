@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.palcompanion.Constants
 import com.example.palcompanion.R
 import com.example.palcompanion.ui.theme.PalCompanionTheme
 import kotlinx.coroutines.launch
@@ -103,8 +104,8 @@ fun PalCompanionApp() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             val imageUrl = when (item.label) {
-                                "Listing of Pals" -> "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/lamball.webp"
-                                "Farming Pals" -> "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/farming.webp"
+                                "Listing of Pals" -> "${Constants.PALS_IMAGE_URL}/lamball.webp"
+                                "Farming Pals" -> Constants.FARMING_PALS_ICON_URL
                                 else -> null
                             }
 

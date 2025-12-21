@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.palcompanion.Constants
 import com.example.palcompanion.R
 import com.example.palcompanion.data.Breeding
 
@@ -95,7 +96,7 @@ fun PalIcon(name: String, modifier: Modifier = Modifier) {
             // Use the raw database name (e.g., "green_slime") directly in the URL, as you correctly pointed out.
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/${name}.webp")
+                    .data("${Constants.PALS_IMAGE_URL}/${name}.webp")
                     .crossfade(true)
                     .build(),
                 contentDescription = displayName,

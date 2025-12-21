@@ -1,6 +1,7 @@
 package com.example.palcompanion.model
 
 import androidx.annotation.StringRes
+import com.example.palcompanion.Constants
 import com.example.palcompanion.R
 
 
@@ -36,7 +37,7 @@ data class Drop(
     val special: String? = null
 ) {
     val imageUrl: String
-        get() = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops/${name.replace(' ', '_').lowercase()}.png"
+        get() = "${Constants.PALS_DROPS_IMAGE_URL}/${name.replace(' ', '_').lowercase()}.png"
 }
 
 
@@ -51,29 +52,29 @@ data class ActiveSkill(
 
 
 enum class PalElement(val iconUrl: String, val iconIcUrl: String) {
-    NORMAL("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/normal.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/normal_ic.webp"),
-    GRASS("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/grass.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/grass_ic.webp"),
-    FIRE("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/fire.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/fire_ic.webp"),
-    WATER("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/water.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/water_ic.webp"),
-    ICE("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/ice.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/ice_ic.webp"),
-    ELECTRIC("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/electric.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/electric_ic.webp"),
-    GROUND("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/ground.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/ground_ic.webp"),
-    DARK("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/dark.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/dark_ic.webp"),
-    DRAGON("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements/dragon.webp", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Elements_Ic/dragon_ic.webp")
+    NORMAL(Constants.NORMAL_ELEMENT_URL, Constants.NORMAL_ELEMENT_ICON_URL),
+    GRASS(Constants.GRASS_ELEMENT_URL, Constants.GRASS_ELEMENT_ICON_URL),
+    FIRE(Constants.FIRE_ELEMENT_URL, Constants.FIRE_ELEMENT_ICON_URL),
+    WATER(Constants.WATER_ELEMENT_URL, Constants.WATER_ELEMENT_ICON_URL),
+    ICE(Constants.ICE_ELEMENT_URL, Constants.ICE_ELEMENT_ICON_URL),
+    ELECTRIC(Constants.ELECTRIC_ELEMENT_URL, Constants.ELECTRIC_ELEMENT_ICON_URL),
+    GROUND(Constants.GROUND_ELEMENT_URL, Constants.GROUND_ELEMENT_ICON_URL),
+    DARK(Constants.DARK_ELEMENT_URL, Constants.DARK_ELEMENT_ICON_URL),
+    DRAGON(Constants.DRAGON_ELEMENT_URL, Constants.DRAGON_ELEMENT_ICON_URL)
 }
 
 
 enum class WorkSuitability(val iconUrl: String, @StringRes val displayName: Int) {
-    KINDLING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/kindling.webp", R.string.work_kindling),
-    WATERING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/watering.webp", R.string.work_watering),
-    PLANTING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/planting.webp", R.string.work_planting),
-    GENERATING_ELECTRICITY("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/generating_electricity.webp", R.string.work_generating_electricity),
-    HANDIWORK("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/handiwork.webp", R.string.work_handiwork),
-    GATHERING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/gathering.webp", R.string.work_gathering),
-    LUMBERING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/lumbering.webp", R.string.work_lumbering),
-    MINING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/mining.webp", R.string.work_mining),
-    MEDICINE_PRODUCTION("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/medicine_production.webp", R.string.work_medicine_production),
-    COOLING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/cooling.webp", R.string.work_cooling),
-    TRANSPORTING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/transporting.webp", R.string.work_transporting),
-    FARMING("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Jobs/farming.webp", R.string.work_farming)
+    KINDLING(Constants.KINDLING_ICON_URL, R.string.work_kindling),
+    WATERING(Constants.WATERING_ICON_URL, R.string.work_watering),
+    PLANTING(Constants.PLANTING_ICON_URL, R.string.work_planting),
+    GENERATING_ELECTRICITY(Constants.GENERATING_ELECTRICITY_ICON_URL, R.string.work_generating_electricity),
+    HANDIWORK(Constants.HANDIWORK_ICON_URL, R.string.work_handiwork),
+    GATHERING(Constants.GATHERING_ICON_URL, R.string.work_gathering),
+    LUMBERING(Constants.LUMBERING_ICON_URL, R.string.work_lumbering),
+    MINING(Constants.MINING_ICON_URL, R.string.work_mining),
+    MEDICINE_PRODUCTION(Constants.MEDICINE_PRODUCTION_ICON_URL, R.string.work_medicine_production),
+    COOLING(Constants.COOLING_ICON_URL, R.string.work_cooling),
+    TRANSPORTING(Constants.TRANSPORTING_ICON_URL, R.string.work_transporting),
+    FARMING(Constants.FARMING_PALS_ICON_URL, R.string.work_farming)
 }

@@ -1,6 +1,7 @@
 package com.example.palcompanion.data
 
 import android.content.Context
+import com.example.palcompanion.Constants
 import com.example.palcompanion.model.ActiveSkill
 import com.example.palcompanion.model.Drop
 import com.example.palcompanion.model.Filter
@@ -19,13 +20,13 @@ import java.net.URL
 
 class Datasource(private val context: Context) {
 
-    private val palImageUrlBase = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/"
+    private val palImageUrlBase = Constants.PALS_IMAGE_URL
 
     suspend fun loadPals(): List<Pal> {
         val pals = mutableListOf<Pal>()
         try {
             val jsonString = withContext(Dispatchers.IO) {
-                URL("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals.json").readText()
+                URL(Constants.PALS_JSON_URL).readText()
             }
             val jsonArray = JSONArray(jsonString)
             for (i in 0 until jsonArray.length()) {
@@ -33,7 +34,7 @@ class Datasource(private val context: Context) {
                 val id = jsonObject.optString("id")
                 val name = jsonObject.optString("name")
 
-                val imageUrl = "$palImageUrlBase${name.lowercase().replace(" ", "_")}.webp"
+                val imageUrl = "$palImageUrlBase/${name.lowercase().replace(" ", "_")}.webp"
 
                 val elements = mutableListOf<PalElement>()
                 try {
@@ -144,7 +145,7 @@ class Datasource(private val context: Context) {
                 iconUrl = it.iconUrl,
                 workSuitability = it
             )
-        } + Filter("Cancel", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/cancel.webp")
+        } + Filter("Cancel", Constants.CANCEL_ICON_URL)
     }
 
     fun loadPalTypeFilters(): List<Filter> {
@@ -154,12 +155,12 @@ class Datasource(private val context: Context) {
                 iconUrl = it.iconIcUrl,
                 palElement = it
             )
-        } + Filter("Cancel", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/cancel.webp")
+        } + Filter("Cancel", Constants.CANCEL_ICON_URL)
     }
 
     fun loadJobLevelFilters(): List<Filter> {
         return listOf(
-            Filter("Cancel", "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/cancel.webp"),
+            Filter("Cancel", Constants.CANCEL_ICON_URL),
         )
     }
 }

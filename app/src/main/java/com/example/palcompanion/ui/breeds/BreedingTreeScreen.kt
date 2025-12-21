@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.palcompanion.Constants
 import com.example.palcompanion.data.Breeding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -511,7 +512,7 @@ fun PalNode(
             val imageName = palName.replace(' ', '_').lowercase()
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/${imageName}.webp")
+                    .data("${Constants.PALS_IMAGE_URL}/${imageName}.webp")
                     .crossfade(true)
                     .build(),
                 contentDescription = palName,
@@ -526,7 +527,7 @@ fun PalNode(
             )
             if (isCrowned) {
                 AsyncImage(
-                    model = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/crown_icon.png",
+                    model = Constants.CROWN_ICON_URL,
                     contentDescription = "Crown",
                     modifier = Modifier
                         .size(30.dp)

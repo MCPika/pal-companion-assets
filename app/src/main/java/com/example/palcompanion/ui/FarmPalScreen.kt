@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.palcompanion.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +80,7 @@ fun FarmPalScreen(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
-                                    painter = rememberAsyncImagePainter(model = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops/${farmDrop.replace(' ', '_').lowercase()}.png"),
+                                    painter = rememberAsyncImagePainter(model = "${Constants.PALS_DROPS_IMAGE_URL}/${farmDrop.replace(' ', '_').lowercase()}.png"),
                                     contentDescription = farmDrop,
                                     modifier = Modifier.size(24.dp)
                                 )
