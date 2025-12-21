@@ -2122,7 +2122,7 @@
     },
     {
       "parent1": "anubis",
-      "parent2": "test",
+      "parent2": "anubis",
       "child": "anubis"
     },
     {
