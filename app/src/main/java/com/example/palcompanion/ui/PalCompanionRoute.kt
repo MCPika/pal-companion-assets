@@ -35,7 +35,8 @@ sealed class PalCompanionRoute(val route: String) {
 @Composable
 fun PalCompanionNavHost(
     navController: NavHostController,
-    viewModel: PalViewModel,
+    palViewModel: PalViewModel,
+    farmPalViewModel: FarmPalViewModel,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -44,13 +45,13 @@ fun PalCompanionNavHost(
         modifier = modifier
     ) {
         composable(PalCompanionRoute.PalList.route) {
-            val pals by viewModel.pals.collectAsState()
+            val pals by palViewModel.pals.collectAsState()
             PalList(
                 palList = pals,
                 onPalClicked = { pal ->
                     navController.navigate(PalCompanionRoute.PalDetail.createRoute(pal.name))
                 },
-                viewModel = viewModel
+                viewModel = palViewModel
             )
         }
         composable(
@@ -58,7 +59,7 @@ fun PalCompanionNavHost(
             arguments = listOf(navArgument("palName") { type = NavType.StringType })
         ) { backStackEntry ->
             val palName = backStackEntry.arguments?.getString("palName")
-            val pal = viewModel.getPalByName(palName)
+            val pal = palViewModel.getPalByName(palName)
             if (pal != null) {
                 PalDetailScreen(pal = pal, navController = navController)
             }
@@ -81,7 +82,7 @@ fun PalCompanionNavHost(
             BreedingTreeRoute()
         }
         composable(PalCompanionRoute.FarmPal.route) {
-            FarmPalScreen(navController = navController)
+            FarmPalScreen(navController = navController, viewModel = farmPalViewModel)
         }
         composable(PalCompanionRoute.BreedingTreeSaved.route) {
             BreedingTreeSavedScreen(navController = navController)

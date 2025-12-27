@@ -120,15 +120,14 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                         .padding(8.dp)
                 ) {
                     Text(
-                        buildAnnotatedString {
-                            withStyle(style = MaterialTheme.typography.headlineSmall.toSpanStyle().copy(color = titleColor)) {
-                                append(stringResource(R.string.partner_skill))
-                            }
-                            withStyle(style = MaterialTheme.typography.titleMedium.toSpanStyle().copy(color = Color(0xFFFFA500))) {
-                                append(" ")
-                                append(pal.partnerSkill.name)
-                            }
-                        }
+                        text = stringResource(R.string.partner_skill),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = titleColor
+                    )
+                    Text(
+                        text = pal.partnerSkill.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFFFFA500)
                     )
                     Text(
                         text = pal.partnerSkill.description,

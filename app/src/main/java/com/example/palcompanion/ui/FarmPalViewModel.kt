@@ -1,11 +1,13 @@
 package com.example.palcompanion.ui
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.palcompanion.PalCompanionApplication
 import com.example.palcompanion.data.Datasource
 import com.example.palcompanion.model.Pal
 import com.example.palcompanion.model.WorkSuitability
@@ -14,7 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class FarmPalViewModel(application: Application) : AndroidViewModel(application) {
+class FarmPalViewModel(
+    application: Application,
+    private val datasource: Datasource
+) : AndroidViewModel(application) {
 
     private val _pals = MutableStateFlow<List<Pal>>(emptyList())
     val pals: StateFlow<List<Pal>> = _pals.asStateFlow()
@@ -46,7 +51,9 @@ class FarmPalViewModel(application: Application) : AndroidViewModel(application)
     ).sorted()
 
     init {
-        loadPals()
+        val appLocales = AppCompatDelegate.getApplicationLocales()
+        val language = if (appLocales.isEmpty) "en" else appLocales[0]?.language ?: "en"
+        loadPals(language)
         viewModelScope.launch {
             selectedFarmDrop.collect { selectedDrop ->
                 if (selectedDrop == null) {
@@ -60,9 +67,9 @@ class FarmPalViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    private fun loadPals() {
+    fun loadPals(language: String) {
         viewModelScope.launch {
-            allPals = Datasource(getApplication()).loadPals().filter { pal ->
+            allPals = datasource.loadPals(language).filter { pal ->
                 pal.workSuitability.any { it.type == WorkSuitability.FARMING }
             }
             _pals.value = allPals
@@ -80,8 +87,8 @@ class FarmPalViewModel(application: Application) : AndroidViewModel(application)
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application)
-                FarmPalViewModel(application)
+                val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as PalCompanionApplication)
+                FarmPalViewModel(application, application.container.datasource)
             }
         }
     }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.model.PalWorkSuitability
@@ -22,7 +23,7 @@ fun PalWorkSuitability(workSuitability: PalWorkSuitability, modifier: Modifier =
     ) {
         Image(
             painter = rememberAsyncImagePainter(workSuitability.type.iconUrl),
-            contentDescription = workSuitability.type.name,
+            contentDescription = stringResource(id = workSuitability.type.displayName),
             modifier = Modifier.size(24.dp)
         )
         //Spacer(modifier = Modifier.width(2.dp))

@@ -29,18 +29,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.Constants
+import com.example.palcompanion.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FarmPalScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: FarmPalViewModel = viewModel(factory = FarmPalViewModel.Factory)
+    viewModel: FarmPalViewModel
 ) {
     val pals by viewModel.pals.collectAsState()
     val selectedFarmDrop by viewModel.selectedFarmDrop.collectAsState()
@@ -55,7 +56,7 @@ fun FarmPalScreen(
                 value = selectedFarmDrop ?: "",
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Pal Farming Drop") },
+                label = { Text(stringResource(id = R.string.pal_farm_drop))},
                 trailingIcon = {
                     if (selectedFarmDrop != null) {
                         IconButton(onClick = { viewModel.clearFarmDropSelection() }) {

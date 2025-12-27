@@ -22,8 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.palcompanion.R
 import com.example.palcompanion.model.Filter
 import com.example.palcompanion.model.PalElement
 import com.example.palcompanion.model.WorkSuitability
@@ -42,13 +44,13 @@ fun FilterBottomSheet(
     onPalElementFilterClicked: (PalElement) -> Unit,
     onJobLevelFilterClicked: (Int) -> Unit,
 ) {
-    val workCancelFilter = workSuitabilityFilters.find { it.name == "Cancel" }
-    val otherWorkFilters = workSuitabilityFilters.filter { it.name != "Cancel" }
+    val workCancelFilter = workSuitabilityFilters.find { it.name == stringResource(R.string.cancel) }
+    val otherWorkFilters = workSuitabilityFilters.filter { it.name != stringResource(R.string.cancel) }
 
-    val palTypeCancelFilter = palTypeFilters.find { it.name == "Cancel" }
-    val otherPalTypeFilters = palTypeFilters.filter { it.name != "Cancel" }
+    val palTypeCancelFilter = palTypeFilters.find { it.name == stringResource(R.string.cancel) }
+    val otherPalTypeFilters = palTypeFilters.filter { it.name != stringResource(R.string.cancel) }
 
-    val jobLevelCancelFilter = jobLevelFilters.find { it.name == "Cancel" }
+    val jobLevelCancelFilter = jobLevelFilters.find { it.name == stringResource(R.string.cancel) }
 
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -57,7 +59,7 @@ fun FilterBottomSheet(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "- Pal Element -",
+                text = stringResource(R.string.pal_element),
                 modifier = Modifier.padding(bottom = 6.dp)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -80,7 +82,7 @@ fun FilterBottomSheet(
             }
 
             Text(
-                text = "- Pal Work Suitability -",
+                text = stringResource(R.string.pal_work_suitability),
                 modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -103,7 +105,7 @@ fun FilterBottomSheet(
             }
 
             Text(
-                text = "- Pal Work Level -",
+                text = stringResource(R.string.pal_work_level),
                 modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -136,7 +138,7 @@ fun FilterChip(filter: Filter, isSelected: Boolean, onClick: () -> Unit, modifie
             .size(36.dp)
             .clip(CircleShape)
             .then(
-                if (filter.name != "Cancel") {
+                if (filter.name != stringResource(R.string.cancel)) {
                     Modifier.border(
                         width = 1.dp,
                         color = if (isSelected) Color.Red else Color.White,

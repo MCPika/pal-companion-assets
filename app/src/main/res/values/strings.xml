@@ -1,9 +1,8 @@
 <resources>
-    <string name="app_name">Pal Companion</string>
-    <string name="search_by_pal_name_or_pal_id">Search by Pal Name or Pal ID</string>
+    <string name="app_name" translatable="false">Pal Companion</string>
     <string name="search_lamball_or_001">Search -Lamball- or -001-</string>
     <string name="description">Description</string>
-    <string name="partner_skill">Partner Skill - </string>
+    <string name="partner_skill">Partner Skill</string>
     <string name="work_skills">Work Skills</string>
     <string name="drops">Drops</string>
     <string name="active_skills">Active Skills</string>
@@ -27,4 +26,28 @@
     <string name="work_cooling">Cooling</string>
     <string name="work_transporting">Transporting</string>
     <string name="work_farming">Farming</string>
+
+    <string name="element_normal">NORMAL</string>
+    <string name="element_grass">GRASS</string>
+    <string name="element_fire">FIRE</string>
+    <string name="element_water">WATER</string>
+    <string name="element_ice">ICE</string>
+    <string name="element_electric">ELECTRIC</string>
+    <string name="element_ground">GROUND</string>
+    <string name="element_dark">DARK</string>
+    <string name="element_dragon">DRAGON</string>
+
+    <string name="pal_farm_drop">Pal Farming Drop</string>
+
+    <string name="listing_of_pals">Listing of Pals</string>
+    <string name="farming_pals">Farming Pals</string>
+    <string name="breeding_tree_saved">Breeding Tree Saved</string>
+    <string name="en">EN</string>
+    <string name="fr">FR</string>
+
+    <string name="pal_element">- Pal Element -</string>
+    <string name="pal_work_suitability">- Pal Work Suitability -</string>
+    <string name="pal_work_level">- Pal Work Level -</string>
+    <string name="cancel">Cancel</string>
+    <string name="pal_number_prefix">No. </string>
 </resources>

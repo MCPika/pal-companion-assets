@@ -1,8 +1,11 @@
 package com.example.palcompanion
 
 object Constants {
-    const val BREEDING_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@e8ee877/breeding.json"
-    const val PALS_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@196e469/pals.json"
+    const val BREEDING_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@8111517/breeding.json"
+
+
+    const val PALS_EN_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@ec3aec9/pals_en.json"
+    const val PALS_FR_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@54cbf49/pals_fr.json"
 
 
     const val CROWN_ICON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@645a50b/crown_icon.png"

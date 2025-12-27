@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.model.PalElement
@@ -13,7 +14,7 @@ import com.example.palcompanion.model.PalElement
 fun PalElement(element: PalElement, modifier: Modifier = Modifier) {
     Image(
         painter = rememberAsyncImagePainter(element.iconUrl),
-        contentDescription = element.name,
+        contentDescription = stringResource(id = element.displayName),
         contentScale = ContentScale.FillHeight,
         modifier = Modifier.height(18.dp).then(modifier)
     )

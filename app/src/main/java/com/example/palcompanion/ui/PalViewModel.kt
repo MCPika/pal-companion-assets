@@ -1,6 +1,7 @@
 package com.example.palcompanion.ui
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -48,7 +49,9 @@ class PalViewModel(
     val selectedJobLevels: StateFlow<Set<Int>> = _selectedJobLevels.asStateFlow()
 
     init {
-        loadPals()
+        val appLocales = AppCompatDelegate.getApplicationLocales()
+        val language = if (appLocales.isEmpty) "en" else appLocales[0]?.language ?: "en"
+        loadPals(language)
         loadBreedingCombos()
         viewModelScope.launch {
             combine(
@@ -95,9 +98,9 @@ class PalViewModel(
         }
     }
 
-    private fun loadPals() {
+    fun loadPals(language: String) {
         viewModelScope.launch {
-            allPals = datasource.loadPals()
+            allPals = datasource.loadPals(language)
             _pals.value = allPals
             _isLoading.value = false
         }

@@ -1,6 +1,7 @@
 package com.example.palcompanion.data
 
 import android.content.Context
+import android.util.Log
 import com.example.palcompanion.Constants
 import com.example.palcompanion.model.ActiveSkill
 import com.example.palcompanion.model.Drop
@@ -22,13 +23,14 @@ class Datasource(private val context: Context) {
 
     private val palImageUrlBase = Constants.PALS_IMAGE_URL
 
-    suspend fun loadPals(): List<Pal> {
+    suspend fun loadPals(language: String): List<Pal> = withContext(Dispatchers.IO) {
         val pals = mutableListOf<Pal>()
         try {
-            val jsonString = withContext(Dispatchers.IO) {
-                URL(Constants.PALS_JSON_URL).readText()
-            }
+            val jsonUrl = if (language == "fr") Constants.PALS_FR_JSON_URL else Constants.PALS_EN_JSON_URL
+            Log.d("Datasource", "Loading pals from: $jsonUrl")
+            val jsonString = URL(jsonUrl).readText()
             val jsonArray = JSONArray(jsonString)
+
             for (i in 0 until jsonArray.length()) {
                 val jsonObject = jsonArray.getJSONObject(i)
                 val id = jsonObject.optString("id")
@@ -37,19 +39,20 @@ class Datasource(private val context: Context) {
                 val imageUrl = "$palImageUrlBase/${name.lowercase().replace(" ", "_")}.webp"
 
                 val elements = mutableListOf<PalElement>()
+                val palElementKey = "palElement"
                 try {
-                    when (val elementsJson = jsonObject.opt("palElement")) { // CORRECTED KEY
+                    when (val elementsJson = jsonObject.opt(palElementKey)) {
                         is JSONArray -> {
                             for (j in 0 until elementsJson.length()) {
-                                elements.add(PalElement.valueOf(elementsJson.getString(j).uppercase()))
+                                PalElement.fromString(elementsJson.optString(j))?.let { elements.add(it) }
                             }
                         }
                         is String -> {
-                            elements.add(PalElement.valueOf(elementsJson.uppercase()))
+                            PalElement.fromString(elementsJson)?.let { elements.add(it) }
                         }
                     }
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
+                } catch (e: Exception) {
+                    Log.e("Datasource", "Error parsing elements for pal: $name", e)
                 }
 
                 val workSuitabilitiesArray = jsonObject.optJSONArray("workSuitabilities") ?: JSONArray()
@@ -57,14 +60,17 @@ class Datasource(private val context: Context) {
                 for (j in 0 until workSuitabilitiesArray.length()) {
                     val workObject = workSuitabilitiesArray.getJSONObject(j)
                     try {
-                        workSuitabilities.add(
-                            PalWorkSuitability(
-                                WorkSuitability.valueOf(workObject.getString("work").uppercase()),
-                                workObject.getInt("level")
+                        val workName = workObject.optString("work")
+                        WorkSuitability.fromString(workName)?.let {
+                            workSuitabilities.add(
+                                PalWorkSuitability(
+                                    it,
+                                    workObject.getInt("level")
+                                )
                             )
-                        )
-                    } catch (e: IllegalArgumentException) {
-                        e.printStackTrace()
+                        } ?: Log.w("Datasource", "Unknown work suitability '$workName' for pal: $name")
+                    } catch (e: Exception) {
+                        Log.e("Datasource", "Error parsing work suitability for pal: $name", e)
                     }
                 }
 
@@ -98,21 +104,25 @@ class Datasource(private val context: Context) {
 
                 val activeSkillsArray = jsonObject.optJSONArray("activeSkills") ?: JSONArray()
                 val activeSkills = mutableListOf<ActiveSkill>()
+                val skillElementKey = "skillElement"
                 for (j in 0 until activeSkillsArray.length()) {
                     val skillObject = activeSkillsArray.getJSONObject(j)
                     try {
-                        activeSkills.add(
-                            ActiveSkill(
-                                level = skillObject.optInt("level"),
-                                name = skillObject.optString("name"),
-                                description = skillObject.optString("description"),
-                                cooldown = skillObject.optInt("cooldown"),
-                                power = skillObject.optInt("power"),
-                                element = PalElement.valueOf(skillObject.getString("skillElement").uppercase()) // CORRECTED KEY
+                        val skillElementName = skillObject.optString(skillElementKey)
+                        PalElement.fromString(skillElementName)?.let {
+                            activeSkills.add(
+                                ActiveSkill(
+                                    level = skillObject.optInt("level"),
+                                    name = skillObject.optString("name"),
+                                    description = skillObject.optString("description"),
+                                    cooldown = skillObject.optInt("cooldown"),
+                                    power = skillObject.optInt("power"),
+                                    element = it
+                                )
                             )
-                        )
-                    } catch (e: IllegalArgumentException) {
-                        e.printStackTrace()
+                        } ?: Log.w("Datasource", "Unknown skill element '$skillElementName' for pal: $name")
+                    } catch (e: Exception) {
+                        Log.e("Datasource", "Error parsing active skill for pal: $name", e)
                     }
                 }
 
@@ -131,11 +141,11 @@ class Datasource(private val context: Context) {
                 )
             }
         } catch (ioException: IOException) {
-            ioException.printStackTrace()
+            Log.e("Datasource", "Failed to load pals", ioException)
         } catch (jsonException: JSONException) {
-            jsonException.printStackTrace()
+            Log.e("Datasource", "Failed to parse pals JSON", jsonException)
         }
-        return pals
+        return@withContext pals
     }
 
     fun loadWorkSuitabilityFilters(): List<Filter> {
