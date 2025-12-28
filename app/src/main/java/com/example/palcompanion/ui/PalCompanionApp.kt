@@ -176,6 +176,8 @@ fun PalCompanionApp() {
                                     if (newLanguage != currentLanguage) {
                                         currentLanguage = newLanguage
                                         LocaleHelper.setLocale(newLanguage)
+                                        navController.navigate(PalCompanionRoute.PalList.route)
+                                        scope.launch { drawerState.close() }
                                     }
                                 }
                             )
