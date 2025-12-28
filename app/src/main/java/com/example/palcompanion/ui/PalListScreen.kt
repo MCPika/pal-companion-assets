@@ -99,7 +99,7 @@ fun PalList(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Pal Element")
+                    Text(text = stringResource(id = R.string.pal_element))
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = { viewModel.clearPalElementFilters() }) {
                         Icon(Icons.Default.Clear, contentDescription = "Clear")
@@ -133,7 +133,7 @@ fun PalList(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Pal Work Suitability")
+                    Text(text = stringResource(id = R.string.pal_work_suitability))
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = { viewModel.clearWorkSuitabilityFilters() }) {
                         Icon(Icons.Default.Clear, contentDescription = "Clear")
@@ -167,7 +167,7 @@ fun PalList(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Pal Work Level")
+                    Text(text = stringResource(id = R.string.pal_work_level))
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = { viewModel.clearJobLevelFilters() }) {
                         Icon(Icons.Default.Clear, contentDescription = "Clear")

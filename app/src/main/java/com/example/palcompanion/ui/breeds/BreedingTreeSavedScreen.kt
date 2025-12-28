@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.palcompanion.Constants
+import com.example.palcompanion.R
 import com.example.palcompanion.data.SavedBreedingTree
 import com.example.palcompanion.ui.PalCompanionRoute
 import com.google.gson.Gson
@@ -88,7 +90,7 @@ fun BreedingTreeSavedScreen(
                         modifier = Modifier.weight(1f).fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "No saved breeding trees found.")
+                        Text(text = stringResource(id = R.string.no_saved_breeding_trees_found))
                     }
                 } else {
                     LazyColumn(

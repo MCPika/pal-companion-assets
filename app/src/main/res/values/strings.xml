@@ -9,7 +9,7 @@
     <string name="level">Level</string>
     <string name="cooldown">Cooldown</string>
     <string name="power">Power</string>
-    <string name="go_to_breeding_tree">Go to Breeding Tree</string>
+    <string name="go_to_breeding_tree">Breeding Tree</string>
     <string name="breeding_tree">Breeding Tree</string>
     <string name="pal_details">Pal Details</string>
     <string name="breeding_combinations">Breeding Combinations</string>
@@ -42,6 +42,7 @@
     <string name="listing_of_pals">Listing of Pals</string>
     <string name="farming_pals">Farming Pals</string>
     <string name="breeding_tree_saved">Breeding Tree Saved</string>
+
     <string name="en">EN</string>
     <string name="fr">FR</string>
 
@@ -50,4 +51,5 @@
     <string name="pal_work_level">- Pal Work Level -</string>
     <string name="cancel">Cancel</string>
     <string name="pal_number_prefix">No. </string>
+    <string name="no_saved_breeding_trees_found">No Saved Breeding Trees.</string>
 </resources>

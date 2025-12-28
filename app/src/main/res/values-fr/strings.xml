@@ -2,12 +2,12 @@
     <string name="pal_farm_drop">Objets Lâchés par les Pals Fermiers</string>
     <string name="listing_of_pals">Liste des Pals</string>
     <string name="farming_pals">Pals Fermiers</string>
-    <string name="breeding_tree_saved">Arbres de Reproduction Sauvegardés</string>
+    <string name="breeding_tree_saved">Arbre de Reproduction Sauvegardé</string>
     <string name="en">EN</string>
     <string name="fr">FR</string>
 
     <string name="pal_element">- Élément de Pal -</string>
-    <string name="pal_work_suitability">- Aptitude de Travail de Pal -</string>
+    <string name="pal_work_suitability">- Capacités de Travail de Pal -</string>
     <string name="pal_work_level">- Niveau de Travail de Pal -</string>
     <string name="cancel">Annuler</string>
     <string name="pal_number_prefix">No. </string>
@@ -18,7 +18,7 @@
     <string name="level">Niveau</string>
     <string name="cooldown">Temps d\'Attente</string>
     <string name="power">Force</string>
-    <string name="go_to_breeding_tree">Vers l\'Arbre de Reproduction</string>
+    <string name="go_to_breeding_tree">Arbre de Reproduction</string>
     <string name="breeding_tree">Arbre de Reproduction</string>
     <string name="pal_details">Détails du Pal</string>
     <string name="breeding_combinations">Combinaisons de Reproduction</string>
@@ -46,4 +46,5 @@
     <string name="element_ground">Terre</string>
     <string name="element_dark">Ténèbres</string>
     <string name="element_dragon">Dragon</string>
+    <string name="no_saved_breeding_trees_found">Aucun Arbres de Reproduction Sauvegardés.</string>
 </resources>

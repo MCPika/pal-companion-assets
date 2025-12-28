@@ -163,7 +163,7 @@ fun PalCompanionApp() {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
+                                .padding(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -184,6 +184,8 @@ fun PalCompanionApp() {
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(R.string.fr))
                         }
+
+                        Spacer(modifier = Modifier.weight(0.1f))
                     }
                 }
             }
