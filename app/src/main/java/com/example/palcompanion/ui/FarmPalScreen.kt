@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -45,7 +47,13 @@ fun FarmPalScreen(
 ) {
     val pals by viewModel.pals.collectAsState()
     val selectedFarmDrop by viewModel.selectedFarmDrop.collectAsState()
+    val sortedFarmDrops by viewModel.sortedFarmDrops.collectAsState()
     var expanded by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    LaunchedEffect(context) {
+        viewModel.sortFarmDrops(context)
+    }
 
     Column(modifier = modifier) {
         ExposedDropdownMenuBox(
@@ -53,10 +61,10 @@ fun FarmPalScreen(
             onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
-                value = selectedFarmDrop ?: "",
+                value = selectedFarmDrop?.let { stringResource(id = it.nameResId) } ?: "",
                 onValueChange = {},
                 readOnly = true,
-                label = { Text(stringResource(id = R.string.pal_farm_drop))},
+                label = { Text(stringResource(id = R.string.pal_farm_drop)) },
                 trailingIcon = {
                     if (selectedFarmDrop != null) {
                         IconButton(onClick = { viewModel.clearFarmDropSelection() }) {
@@ -76,16 +84,17 @@ fun FarmPalScreen(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                viewModel.farmDrops.forEach { farmDrop ->
+                sortedFarmDrops.forEach { farmDrop ->
+                    val name = stringResource(id = farmDrop.nameResId)
                     DropdownMenuItem(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
-                                    painter = rememberAsyncImagePainter(model = "${Constants.PALS_DROPS_IMAGE_URL}/${farmDrop.replace(' ', '_').lowercase()}.png"),
-                                    contentDescription = farmDrop,
+                                    painter = rememberAsyncImagePainter(model = "${Constants.PALS_DROPS_IMAGE_URL}/${farmDrop.englishName.replace(' ', '_').lowercase()}.png"),
+                                    contentDescription = name,
                                     modifier = Modifier.size(24.dp)
                                 )
-                                Text(farmDrop, modifier = Modifier.padding(start = 8.dp))
+                                Text(name, modifier = Modifier.padding(start = 8.dp))
                             }
                         },
                         onClick = {

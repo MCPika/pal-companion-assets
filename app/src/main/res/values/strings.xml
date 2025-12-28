@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Pal Companion</string>
+
     <string name="search_lamball_or_001">Search -Lamball- or -001-</string>
     <string name="description">Description</string>
     <string name="partner_skill">Partner Skill</string>
@@ -52,4 +53,23 @@
     <string name="cancel">Cancel</string>
     <string name="pal_number_prefix">No. </string>
     <string name="no_saved_breeding_trees_found">No Saved Breeding Trees.</string>
+
+    <string name="farm_drop_arrow">Arrow</string>
+    <string name="farm_drop_bone">Bone</string>
+    <string name="farm_drop_cotton_candy">Cotton Candy</string>
+    <string name="farm_drop_egg">Egg</string>
+    <string name="farm_drop_flame_organ">Flame Organ</string>
+    <string name="farm_drop_giga_sphere">Giga Sphere</string>
+    <string name="farm_drop_gold_coin">Gold Coin</string>
+    <string name="farm_drop_high_quality_cloth">High Quality Cloth</string>
+    <string name="farm_drop_high_quality_pal_oil">High Quality Pal Oil</string>
+    <string name="farm_drop_honey">Honey</string>
+    <string name="farm_drop_hyper_sphere">Hyper Sphere</string>
+    <string name="farm_drop_mega_sphere">Mega Sphere</string>
+    <string name="farm_drop_milk">Milk</string>
+    <string name="farm_drop_pal_fluids">Pal Fluids</string>
+    <string name="farm_drop_pal_sphere">Pal Sphere</string>
+    <string name="farm_drop_red_berries">Red Berries</string>
+    <string name="farm_drop_venom_gland">Venom Gland</string>
+    <string name="farm_drop_wool">Wool</string>
 </resources>

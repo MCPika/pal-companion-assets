@@ -47,4 +47,22 @@
     <string name="element_dark">Ténèbres</string>
     <string name="element_dragon">Dragon</string>
     <string name="no_saved_breeding_trees_found">Aucun Arbres de Reproduction Sauvegardés.</string>
+    <string name="farm_drop_arrow">Flèche</string>
+    <string name="farm_drop_bone">Os</string>
+    <string name="farm_drop_cotton_candy">Barbe à Papa</string>
+    <string name="farm_drop_egg">Oeuf</string>
+    <string name="farm_drop_flame_organ">Organe d\'Allumage</string>
+    <string name="farm_drop_giga_sphere">Giga Sphère</string>
+    <string name="farm_drop_gold_coin">Pièce d\'Or</string>
+    <string name="farm_drop_high_quality_cloth">Tissu de Haute Qualité</string>
+    <string name="farm_drop_high_quality_pal_oil">Huile de Pal de Qualité</string>
+    <string name="farm_drop_honey">Miel</string>
+    <string name="farm_drop_hyper_sphere">Téra Sphère</string>
+    <string name="farm_drop_mega_sphere">Mega Sphère</string>
+    <string name="farm_drop_milk">Lait</string>
+    <string name="farm_drop_pal_fluids">Fluides de Pal</string>
+    <string name="farm_drop_pal_sphere">Sphère de Pal</string>
+    <string name="farm_drop_red_berries">Baies Rouges</string>
+    <string name="farm_drop_venom_gland">Glande à Venin</string>
+    <string name="farm_drop_wool">Laine</string>
 </resources>
