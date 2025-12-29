@@ -54,11 +54,11 @@
     <string name="farm_drop_egg">Oeuf</string>
     <string name="farm_drop_flame_organ">Organe d\'Allumage</string>
     <string name="farm_drop_giga_sphere">Giga Sphère</string>
-    <string name="farm_drop_gold_coin">Pièces d\'or</string>
-    <string name="farm_drop_high_quality_cloth">Tissu de Haute Qualité</string>
-    <string name="farm_drop_high_quality_pal_oil">Huile de Pal de Haute Qualité</string>
+    <string name="farm_drop_gold_coin">Pièce d\'or</string>
+    <string name="farm_drop_high_quality_cloth">Tissu de Qualité</string>
+    <string name="farm_drop_high_quality_pal_oil">Huile de Pal de Qualité</string>
     <string name="farm_drop_honey">Miel</string>
-    <string name="farm_drop_hyper_sphere">Hyper Sphère</string>
+    <string name="farm_drop_hyper_sphere">Téra Sphère</string>
     <string name="farm_drop_mega_sphere">Méga Sphère</string>
     <string name="farm_drop_milk">Lait</string>
     <string name="farm_drop_pal_fluids">Fluides de Pal</string>

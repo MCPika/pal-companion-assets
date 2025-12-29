@@ -15,7 +15,7 @@ object Constants {
     const val PALS_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@7740c25/Pals_Img"
 
     const val PALS_DROPS_EN_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@2dceac7/Pals_Drops_EN"
-    const val PALS_DROPS_FR_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@2dceac7/Pals_Drops_FR"
+    const val PALS_DROPS_FR_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@c75d08a/Pals_Drops_FR"
 
 
     private const val BASE_URL_JOBS = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@a09b8d0"
