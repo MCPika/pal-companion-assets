@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -175,10 +176,11 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                         style = MaterialTheme.typography.headlineSmall,
                         color = titleColor
                     )
+                    val context = LocalContext.current
                     pal.drops.forEach { drop ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
-                                painter = rememberAsyncImagePainter(model = drop.imageUrl),
+                                painter = rememberAsyncImagePainter(model = drop.getImageUrl(context)),
                                 contentDescription = drop.name,
                                 modifier = Modifier.size(24.dp)
                             )

@@ -35,8 +35,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.palcompanion.Constants
 import com.example.palcompanion.R
+import com.example.palcompanion.model.Drop
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,11 +86,12 @@ fun FarmPalScreen(
             ) {
                 sortedFarmDrops.forEach { farmDrop ->
                     val name = stringResource(id = farmDrop.nameResId)
+                    val drop = Drop(name = name)
                     DropdownMenuItem(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
-                                    painter = rememberAsyncImagePainter(model = "${Constants.PALS_DROPS_IMAGE_URL}/${farmDrop.englishName.replace(' ', '_').lowercase()}.png"),
+                                    painter = rememberAsyncImagePainter(model = drop.getImageUrl(context)),
                                     contentDescription = name,
                                     modifier = Modifier.size(24.dp)
                                 )

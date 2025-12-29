@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.Normalizer
+import java.util.Locale
 
 class FarmPalViewModel(
     application: Application,
@@ -67,9 +69,27 @@ class FarmPalViewModel(
                     _pals.value = allPals
                 } else {
                     val selectedDropName = getApplication<Application>().getString(selectedDrop.nameResId)
+                    val currentLanguage = if (AppCompatDelegate.getApplicationLocales().isEmpty) "en" else AppCompatDelegate.getApplicationLocales()[0]?.language ?: "en"
                     _pals.value = allPals.filter { pal ->
                         pal.drops.any { drop ->
-                            drop.name.equals(selectedDropName, ignoreCase = true) && drop.special == "Farm Drop"
+                            val match = if (currentLanguage == "fr") {
+                                val normalizedDropName = Normalizer.normalize(drop.name, Normalizer.Form.NFD)
+                                    .replace("\\p{M}".toRegex(), "")
+                                    .lowercase(Locale.ROOT)
+                                    .replace("-", " ")
+                                    .replace("'", "")
+                                    .replace("’", "")
+                                val normalizedSelectedDropName = Normalizer.normalize(selectedDropName, Normalizer.Form.NFD)
+                                    .replace("\\p{M}".toRegex(), "")
+                                    .lowercase(Locale.ROOT)
+                                    .replace("-", " ")
+                                    .replace("'", "")
+                                    .replace("’", "")
+                                normalizedDropName == normalizedSelectedDropName
+                            } else {
+                                drop.name.equals(selectedDropName, ignoreCase = true)
+                            }
+                            match && drop.special == "Farm Drop"
                         }
                     }
                 }

@@ -1,8 +1,11 @@
 package com.example.palcompanion.model
 
+import android.content.Context
 import androidx.annotation.StringRes
 import com.example.palcompanion.Constants
 import com.example.palcompanion.R
+import java.text.Normalizer
+import java.util.Locale
 
 
 data class Pal(
@@ -36,8 +39,21 @@ data class Drop(
     val rate: String? = null,
     val special: String? = null
 ) {
-    val imageUrl: String
-        get() = "${Constants.PALS_DROPS_IMAGE_URL}/${name.replace(' ', '_').lowercase()}.png"
+    fun getImageUrl(context: Context): String {
+        val locale = context.resources.configuration.locales[0]
+        val baseUrl = if (locale.language == "fr") Constants.PALS_DROPS_FR_IMAGE_URL else Constants.PALS_DROPS_EN_IMAGE_URL
+        val imageName = if (locale.language == "fr") {
+            Normalizer.normalize(name, Normalizer.Form.NFD)
+                .replace("\\p{M}".toRegex(), "")
+                .replace(' ', '_')
+                .replace("'", "")
+                .replace("’", "")
+                .lowercase(Locale.ROOT)
+        } else {
+            name.replace(' ', '_').lowercase(Locale.ROOT)
+        }
+        return "$baseUrl/$imageName.png"
+    }
 }
 
 
