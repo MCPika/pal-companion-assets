@@ -47,10 +47,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Placeable
@@ -99,44 +101,75 @@ fun DrawScope.drawLinks(
     verticalSpacingPx: Float
 ) {
     fun rec(node: MNode) {
+        if (node.children.isEmpty()) return
+
         val animParent = anims[node.node.id]!!
         val pX = animParent.x.value
         val pY = animParent.y.value
         val parentCenterX = pX + node.width / 2f
         val parentBottomY = pY + node.height
 
-        for (child in node.children) {
+        val childPositions = node.children.map { child ->
             val animChild = anims[child.node.id]!!
-            val cX = animChild.x.value
-            val cY = animChild.y.value
-            val childCenterX = cX + child.width / 2f
+            Triple(
+                child,
+                animChild.x.value + child.width / 2f,
+                animChild.y.value
+            )
+        }
 
-            // --- Draw connecting lines (unchanged except using safe vertical spacing) ---
-            val safeChildTop = kotlin.math.max(cY, parentBottomY + verticalSpacingPx)
-            val midY = (parentBottomY + safeChildTop) / 2f
+        // All children in a branch share one junction. Keeping this value common
+        // also prevents the horizontal connector from splitting during animation.
+        val safeBranchTop = kotlin.math.max(
+            childPositions.minOf { it.third },
+            parentBottomY + verticalSpacingPx
+        )
+        val midY = (parentBottomY + safeBranchTop) / 2f
+        val strokeWidth = 3.dp.toPx()
 
-            drawLine(Color.White, Offset(parentCenterX, parentBottomY), Offset(parentCenterX, midY), 3.dp.toPx())
-            drawLine(Color.White, Offset(parentCenterX, midY), Offset(childCenterX, midY), 3.dp.toPx())
-            drawLine(Color.White, Offset(childCenterX, midY), Offset(childCenterX, safeChildTop), 3.dp.toPx())
+        // Draw the upward arrow and its shaft as ONE filled path. This removes the
+        // seam/overdraw created by placing a separate triangle on top of a line.
+        val arrowHalfWidth = 8.dp.toPx()
+        val arrowHeight = 16.dp.toPx()
+        val tipInset = 4.dp.toPx()
+        val shaftHalfWidth = strokeWidth / 2f
+        val arrowTipY = parentBottomY - tipInset
+        val arrowBaseY = arrowTipY + arrowHeight
 
-            // -------------------------------------------------------------------------
-            // ARROWHEAD → pointing UP into *PARENT ONLY*
-            // -------------------------------------------------------------------------
-            val arrowWidth = 10.dp.toPx()
-            val arrowHeight = 12.dp.toPx()
+        val parentArrowPath = Path().apply {
+            moveTo(parentCenterX, arrowTipY)                         // sharp tip
+            lineTo(parentCenterX - arrowHalfWidth, arrowBaseY)       // head left
+            lineTo(parentCenterX - shaftHalfWidth, arrowBaseY)       // neck left
+            lineTo(parentCenterX - shaftHalfWidth, midY)             // shaft left
+            lineTo(parentCenterX + shaftHalfWidth, midY)             // shaft right
+            lineTo(parentCenterX + shaftHalfWidth, arrowBaseY)       // neck right
+            lineTo(parentCenterX + arrowHalfWidth, arrowBaseY)       // head right
+            close()
+        }
+        drawPath(parentArrowPath, Color.White)
 
-            val arrowTipY = parentBottomY                   // tip touches parent bottom
-            val arrowBaseY = parentBottomY + arrowHeight    // base extends downward
+        for ((child, childCenterX, childTopY) in childPositions) {
+            val safeChildTop = kotlin.math.max(
+                childTopY,
+                parentBottomY + verticalSpacingPx
+            )
 
-            val arrowPath = Path().apply {
-                moveTo(parentCenterX, arrowTipY)                // tip into parent
-                lineTo(parentCenterX - arrowWidth, arrowBaseY)  // bottom-left
-                lineTo(parentCenterX + arrowWidth, arrowBaseY)  // bottom-right
-                close()
+            // One continuous path gives the child branch a clean joined corner
+            // instead of overlapping separate horizontal and vertical lines.
+            val childBranchPath = Path().apply {
+                moveTo(childCenterX, safeChildTop)
+                lineTo(childCenterX, midY)
+                lineTo(parentCenterX, midY)
             }
-
-            drawPath(arrowPath, Color.White)
-
+            drawPath(
+                path = childBranchPath,
+                color = Color.White,
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Butt,
+                    join = StrokeJoin.Miter
+                )
+            )
             rec(child)
         }
     }
