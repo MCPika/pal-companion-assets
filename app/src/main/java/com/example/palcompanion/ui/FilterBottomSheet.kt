@@ -114,7 +114,7 @@ fun FilterBottomSheet(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    (1..4).forEach { level ->
+                    (1..8).forEach { level ->
                         JobLevelFilterChip(
                             level = level,
                             isSelected = level in selectedJobLevels,

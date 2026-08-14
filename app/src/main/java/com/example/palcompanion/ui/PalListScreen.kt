@@ -174,7 +174,7 @@ fun PalList(
                     }
                 }
                 FlowRow(modifier = Modifier.padding(vertical = 8.dp)) {
-                    (1..4).forEach { level ->
+                    (1..8).forEach { level ->
                         val isSelected = selectedJobLevels.contains(level)
                         IconButton(onClick = { viewModel.onJobLevelFilterClicked(level) }) {
                             Box(
