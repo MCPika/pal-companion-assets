@@ -149,7 +149,7 @@ class Datasource(private val context: Context) {
     }
 
     fun loadWorkSuitabilityFilters(): List<Filter> {
-        return WorkSuitability.entries.map { 
+        return WorkSuitability.entries.map {
             Filter(
                 name = it.name.lowercase().replaceFirstChar { char -> char.uppercase() },
                 iconUrl = it.iconUrl,
@@ -159,7 +159,7 @@ class Datasource(private val context: Context) {
     }
 
     fun loadPalTypeFilters(): List<Filter> {
-        return PalElement.entries.map { 
+        return PalElement.entries.map {
             Filter(
                 name = it.name.lowercase().replaceFirstChar { char -> char.uppercase() },
                 iconUrl = it.iconIcUrl,

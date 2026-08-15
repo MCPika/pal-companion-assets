@@ -1,24 +1,33 @@
 package com.example.palcompanion
 
 object Constants {
-    const val BREEDING_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/breeding.json"
+    //const val BREEDING_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/breeding.json"
+    const val BREEDING_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/breeding.json"
 
 
-    const val PALS_EN_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals_en.json"
-    const val PALS_FR_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals_fr.json"
+    //const val PALS_EN_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals_en.json"
+    //const val PALS_FR_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals_fr.json"
+    const val PALS_EN_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/pals_en.json"
+    const val PALS_FR_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/pals_fr.json"
 
 
-    const val CROWN_ICON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/crown_icon.png"
-    const val CANCEL_ICON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/cancel.webp"
+    //const val CROWN_ICON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/crown_icon.png"
+    //const val CANCEL_ICON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/cancel.webp"
+    const val CROWN_ICON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/crown_icon.png"
+    const val CANCEL_ICON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/cancel.webp"
 
 
-    const val PALS_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/"
+    //const val PALS_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/"
+    const val PALS_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Img/"
 
-    const val PALS_DROPS_EN_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops_EN"
-    const val PALS_DROPS_FR_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops_FR"
+    //const val PALS_DROPS_EN_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops_EN"
+    //const val PALS_DROPS_FR_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops_FR"
+    const val PALS_DROPS_EN_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops_EN"
+    const val PALS_DROPS_FR_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops_FR"
 
 
-    private const val BASE_URL_JOBS = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main"
+    //private const val BASE_URL_JOBS = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main"
+    private const val BASE_URL_JOBS = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main"
     const val FARMING_PALS_ICON_URL = "$BASE_URL_JOBS/Pals_Jobs/farming.webp"
     const val MINING_ICON_URL = "$BASE_URL_JOBS/Pals_Jobs/mining.webp"
     const val MEDICINE_PRODUCTION_ICON_URL = "$BASE_URL_JOBS/Pals_Jobs/medicine_production.webp"
@@ -33,7 +42,8 @@ object Constants {
     const val HANDIWORK_ICON_URL = "$BASE_URL_JOBS/Pals_Jobs/handiwork.webp"
 
 
-    private const val BASE_URL_ELEMENT = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main"
+    //private const val BASE_URL_ELEMENT = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main"
+    private const val BASE_URL_ELEMENT = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main"
     const val DRAGON_ELEMENT_URL = "$BASE_URL_ELEMENT/Pals_Elements/dragon.webp"
     const val WATER_ELEMENT_URL = "$BASE_URL_ELEMENT/Pals_Elements/water.webp"
     const val GRASS_ELEMENT_URL = "$BASE_URL_ELEMENT/Pals_Elements/grass.webp"
@@ -45,7 +55,8 @@ object Constants {
     const val GROUND_ELEMENT_URL = "$BASE_URL_ELEMENT/Pals_Elements/ground.webp"
 
 
-    private const val BASE_URL_ELEMENT_ICON = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main"
+    //private const val BASE_URL_ELEMENT_ICON = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main"
+    private const val BASE_URL_ELEMENT_ICON = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main"
     const val DRAGON_ELEMENT_ICON_URL = "$BASE_URL_ELEMENT_ICON/Pals_Elements_Ic/dragon_ic.webp"
     const val WATER_ELEMENT_ICON_URL = "$BASE_URL_ELEMENT_ICON/Pals_Elements_Ic/water_ic.webp"
     const val GRASS_ELEMENT_ICON_URL = "$BASE_URL_ELEMENT_ICON/Pals_Elements_Ic/grass_ic.webp"
