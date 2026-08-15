@@ -1711,7 +1711,7 @@
       "HERBE",
       "NORMAL"
     ],
-    "description": "Est convaincu que frapper un objet cassé peut suffire à le réparer.\nHeureusement, la force de Herbil est parfaitement dosée pour les humains.\nUn simple coup peut même faire repartir un cœur arrêté... comme par miracle.",
+    "description": "Est convaincu que frapper un objet cassé peut suffire à le réparer.\nHeureusement, la force de Herbil est parfaitement dosée pour les humains.\nUn simple coup peut même faire repartir un Coeur arrêté... comme par miracle.",
     "partnerSkill": {
       "name": "Herbapulsion",
       "level": "1",
@@ -2395,7 +2395,7 @@
     "palElement": [
       "TÉNÈBRES"
     ],
-    "description": "Son regard méchant fait qu'il a peu d'amis malgré son grand cœur. \nIl a été observé en train d'offrir de la nourriture à un Vixy séparé de son troupeau.",
+    "description": "Son regard méchant fait qu'il a peu d'amis malgré son grand Coeur. \nIl a été observé en train d'offrir de la nourriture à un Vixy séparé de son troupeau.",
     "partnerSkill": {
       "name": "Shot de Caféine",
       "level": "1",
@@ -3709,7 +3709,7 @@
     ],
     "description": "Si vous trouvez des poils de Nox la nuit, vous feriez mieux de rebrousser chemin sans les ramasser si vous comptez revoir la lumière du jour.",
     "partnerSkill": {
-      "name": "Cœur de Pierre",
+      "name": "Coeur de Pierre",
       "level": "1",
       "description": "Détecte les statues de Pal à proximité lorsqu'il est appelé."
     },
@@ -4853,7 +4853,7 @@
     "palElement": [
       "NORMAL"
     ],
-    "description": "Celui qui a les plus beaux bois domine.\nLorsqu'ils se brisent, son cœur s'effondre avec.\nIl quitte alors le troupeau pour mourir à l'abri des regards.",
+    "description": "Celui qui a les plus beaux bois domine.\nLorsqu'ils se brisent, son Coeur s'effondre avec.\nIl quitte alors le troupeau pour mourir à l'abri des regards.",
     "partnerSkill": {
       "name": "Gardien des Bois",
       "level": "1",
@@ -6416,7 +6416,7 @@
       "EAU",
       "DRAGON"
     ],
-    "description": "Son ruban blanc noircit au contact d'une eau impure.\nSa faculté à identifier les toxines a ainsi longtemps mené à son braconnage, le poussant à entretenir une certaine rancœur envers les humains.",
+    "description": "Son ruban blanc noircit au contact d'une eau impure.\nSa faculté à identifier les toxines a ainsi longtemps mené à son braconnage, le poussant à entretenir une certaine ranCoeur envers les humains.",
     "partnerSkill": {
       "name": "Danse de l'eau",
       "level": "1",
@@ -9664,7 +9664,7 @@
     ],
     "description": "Aussi innocent qu'il en a l'air. \nIl peine ainsi à faire la distinction entre bien et mal et a tendance à être exploité par les personnes malintentionnées.",
     "partnerSkill": {
-      "name": "Dragon Sacré au Grand Cœur",
+      "name": "Dragon Sacré au Grand Coeur",
       "level": "1",
       "description": "Peut être utilisé comme monture pour voler.\nLa vitesse de déplacement augmente en vol.\nLorsqu'il est dans l'équipe, augmente de (40~80)% la quantité d'objets obtenus en vainquant des Pals de type Ténèbres . (effet non cumulable) Technologies 20"
     },
@@ -9792,7 +9792,7 @@
     ],
     "description": "Aussi innocent qu'il en a l'air. \nC'est peut-être ce qui explique l'absence totale de mauvaises intentions dans ses actions.",
     "partnerSkill": {
-      "name": "Dragon Aquatique au Grand Cœur",
+      "name": "Dragon Aquatique au Grand Coeur",
       "level": "1",
       "description": "Peut être utilisé comme monture pour voler.\nLa vitesse de déplacement augmente en vol.\nLorsqu'il est dans l'équipe, réduit de (15~30)% les dégâts de type Feu subis par le joueur et les Pals, et annule l'état Brûlure . (effet non cumulable) Technologies 32"
     },
@@ -10637,7 +10637,7 @@
     ],
     "description": "Court toujours après quelqu'un à la recherche d'une amourette. \nS'il ne s'intéressait au départ qu'aux Pals, il a récemment étendu ses mains démoniaques aux humains.",
     "partnerSkill": {
-      "name": "Draine-Cœur",
+      "name": "Draine-Coeur",
       "level": "1",
       "description": "En combat, confère un effet de vol de vie au joueur et à lui-même, absorbant (5~9)% des dégâts infligés et restaurant leurs PV ."
     },
@@ -14730,7 +14730,7 @@
       "EAU",
       "FEU"
     ],
-    "description": "On peut plonger la main dans sa bouche sans jamais toucher le fond.\nUn chercheur, persuadé qu’il s’agissait d’un espace interdimensionnel, a tenté d’y glisser tout son corps, pensant en faire un sac de couchage.\nMais comme la créature s’est mise à avoir des haut-le-cœur... \nil a fallu se rendre à l’évidence : c’est bien un organe interne.",
+    "description": "On peut plonger la main dans sa bouche sans jamais toucher le fond.\nUn chercheur, persuadé qu’il s’agissait d’un espace interdimensionnel, a tenté d’y glisser tout son corps, pensant en faire un sac de couchage.\nMais comme la créature s’est mise à avoir des haut-le-Coeur... \nil a fallu se rendre à l’évidence : c’est bien un organe interne.",
     "partnerSkill": {
       "name": "Chambre de Braises",
       "level": "1",
@@ -25189,7 +25189,7 @@
       "TERRE",
       "TÉNÈBRES"
     ],
-    "description": "Une seule vie, mais deux consciences.\nLes désaccords sont fréquents au quotidien, et les disputes ne manquent pas.\nPourtant, dès que le combat commence, cœur et corps ne font plus qu’un !",
+    "description": "Une seule vie, mais deux consciences.\nLes désaccords sont fréquents au quotidien, et les disputes ne manquent pas.\nPourtant, dès que le combat commence, Coeur et corps ne font plus qu’un !",
     "partnerSkill": {
       "name": "Laser Corrompu",
       "level": "1",
@@ -29106,7 +29106,7 @@
     "palElement": [
       "DRAGON"
     ],
-    "description": "Les pièces métalliques autour de son cou possèdent des propriétés magnétiques.\nSi celles de ses pattes s’en approchent trop, elles s’y collent.\nLorsque des débris métalliques s’y accumulent, il se met à nettoyer à contrecœur...\net s’agace quand ils ne partent pas facilement.",
+    "description": "Les pièces métalliques autour de son cou possèdent des propriétés magnétiques.\nSi celles de ses pattes s’en approchent trop, elles s’y collent.\nLorsque des débris métalliques s’y accumulent, il se met à nettoyer à contreCoeur...\net s’agace quand ils ne partent pas facilement.",
     "partnerSkill": {
       "name": "Bouclier Aegis",
       "level": "1",
@@ -32681,7 +32681,7 @@
     ],
     "drops": [
       {
-        "name": "Cœur brûlant",
+        "name": "Coeur brûlant",
         "quantity": "1–2",
         "rate": "100%"
       },
@@ -32691,7 +32691,7 @@
         "rate": "100%"
       },
       {
-        "name": "Cœur brûlant",
+        "name": "Coeur brûlant",
         "quantity": "1–2",
         "rate": "100%"
       },
@@ -32766,7 +32766,7 @@
         "rate": "25%"
       },
       {
-        "name": "Cœur brûlant",
+        "name": "Coeur brûlant",
         "quantity": "1–2",
         "rate": "100%"
       },
@@ -36088,7 +36088,7 @@
         "rate": "100%"
       },
       {
-        "name": "Cœur brûlant",
+        "name": "Coeur brûlant",
         "quantity": "1–2",
         "rate": "100%"
       },
