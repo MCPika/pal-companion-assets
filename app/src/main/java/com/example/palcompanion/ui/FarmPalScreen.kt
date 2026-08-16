@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,9 +51,6 @@ fun FarmPalScreen(
     var expanded by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
-    LaunchedEffect(context) {
-        viewModel.sortFarmDrops(context)
-    }
 
     Column(modifier = modifier) {
         ExposedDropdownMenuBox(
@@ -61,7 +58,7 @@ fun FarmPalScreen(
             onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
-                value = selectedFarmDrop?.let { stringResource(id = it.nameResId) } ?: "",
+                value = selectedFarmDrop?.name ?: "",
                 onValueChange = {},
                 readOnly = true,
                 label = { Text(stringResource(id = R.string.pal_farm_drop)) },
@@ -82,10 +79,11 @@ fun FarmPalScreen(
             )
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.heightIn(max = 224.dp) // Max height for approx 7 items (7 * 32dp)
             ) {
                 sortedFarmDrops.forEach { farmDrop ->
-                    val name = stringResource(id = farmDrop.nameResId)
+                    val name = farmDrop.name
                     val drop = Drop(name = name)
                     DropdownMenuItem(
                         text = {

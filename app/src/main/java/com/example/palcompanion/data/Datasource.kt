@@ -148,6 +148,22 @@ class Datasource(private val context: Context) {
         return@withContext pals
     }
 
+    suspend fun loadFarmDrops(language: String): List<FarmDrop> = withContext(Dispatchers.IO) {
+        val farmDrops = mutableListOf<FarmDrop>()
+        try {
+            val jsonUrl = if (language == "fr") Constants.PALS_FARMDROPS_FR_URL else Constants.PALS_FARMDROPS_EN_URL
+            val jsonString = URL(jsonUrl).readText()
+            val jsonArray = JSONArray(jsonString)
+            for (i in 0 until jsonArray.length()) {
+                val dropName = jsonArray.getString(i)
+                farmDrops.add(FarmDrop(dropName))
+            }
+        } catch (e: Exception) {
+            Log.e("Datasource", "Failed to load farm drops", e)
+        }
+        return@withContext farmDrops
+    }
+
     fun loadWorkSuitabilityFilters(): List<Filter> {
         return WorkSuitability.entries.map {
             Filter(
