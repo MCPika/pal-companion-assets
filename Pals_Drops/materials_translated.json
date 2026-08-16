@@ -1,0 +1,486 @@
+{
+  "advanced_technical_manual": {
+    "en": "advanced_technical_manual",
+    "fr": "manuel_technique_superieur"
+  },
+  "ancient_civilization_core": {
+    "en": "ancient_civilization_core",
+    "fr": "noyau_dune_civilisation_antique"
+  },
+  "aquatic_pal_fluids": {
+    "en": "aquatic_pal_fluids",
+    "fr": "fluides_de_pal"
+  },
+  "arrow": {
+    "en": "arrow",
+    "fr": "fleche"
+  },
+  "beautiful_flower": {
+    "en": "beautiful_flower",
+    "fr": "belle_fleur"
+  },
+  "berry_seeds": {
+    "en": "berry_seeds",
+    "fr": "graines_de_baies"
+  },
+  "bone": {
+    "en": "bone",
+    "fr": "os"
+  },
+  "broncherry_meat": {
+    "en": "broncherry_meat",
+    "fr": "viande_de_broncherry"
+  },
+  "cake": {
+    "en": "cake",
+    "fr": "gateau"
+  },
+  "caprity_meat": {
+    "en": "caprity_meat",
+    "fr": "viande_de_caprity"
+  },
+  "caramel_cotton_candy": {
+    "en": "caramel_cotton_candy",
+    "fr": "barbe_a_papa_caramel"
+  },
+  "carbon_fiber": {
+    "en": "carbon_fiber",
+    "fr": "fibre_de_carbone"
+  },
+  "carrot": {
+    "en": "carrot",
+    "fr": "carotte"
+  },
+  "carrot_seeds": {
+    "en": "carrot_seeds",
+    "fr": "graine_de_carotte"
+  },
+  "cavern_mushroom": {
+    "en": "cavern_mushroom",
+    "fr": "champignon_des_cavernes"
+  },
+  "chikipi_poultry": {
+    "en": "chikipi_poultry",
+    "fr": "viande_de_chikipi"
+  },
+  "chromite": {
+    "en": "chromite",
+    "fr": "chromite"
+  },
+  "cloth": {
+    "en": "cloth",
+    "fr": "tissu"
+  },
+  "coal": {
+    "en": "coal",
+    "fr": "charbon"
+  },
+  "copper_key": {
+    "en": "copper_key",
+    "fr": "cle_en_bronze"
+  },
+  "coralum_ore": {
+    "en": "coralum_ore",
+    "fr": "minerai_de_korallium"
+  },
+  "cotton_candy": {
+    "en": "cotton_candy",
+    "fr": "barbe_a_papa"
+  },
+  "crude_oil": {
+    "en": "crude_oil",
+    "fr": "petrole_brut"
+  },
+  "dark_fragment": {
+    "en": "dark_fragment",
+    "fr": "fragment_obscur"
+  },
+  "dark_radiant_gem": {
+    "en": "dark_radiant_gem",
+    "fr": "eclat_tenebra"
+  },
+  "dazzi_cloud": {
+    "en": "dazzi_cloud",
+    "fr": "nuage_de_dazzi"
+  },
+  "decayed_ancient_relic": {
+    "en": "decayed_ancient_relic",
+    "fr": "relique_antique_deterioree"
+  },
+  "diamond": {
+    "en": "diamond",
+    "fr": "diamant"
+  },
+  "dog_coin": {
+    "en": "dog_coin",
+    "fr": "piece_canine"
+  },
+  "dormant_ancient_relic": {
+    "en": "dormant_ancient_relic",
+    "fr": "relique_antique_dormante"
+  },
+  "dragon_radiant_gem": {
+    "en": "dragon_radiant_gem",
+    "fr": "eclat_draco"
+  },
+  "egg": {
+    "en": "egg",
+    "fr": "oeuf"
+  },
+  "eikthyrdeer_venison": {
+    "en": "eikthyrdeer_venison",
+    "fr": "viande_de_eikthyrdeer"
+  },
+  "electric_organ": {
+    "en": "electric_organ",
+    "fr": "organe_electrique"
+  },
+  "electric_radiant_gem": {
+    "en": "electric_radiant_gem",
+    "fr": "eclat_fulgura"
+  },
+  "elizabees_staff": {
+    "en": "elizabees_staff",
+    "fr": "baton_delizabee"
+  },
+  "emerald": {
+    "en": "emerald",
+    "fr": "emeraude"
+  },
+  "fiber": {
+    "en": "fiber",
+    "fr": "fibre"
+  },
+  "fire_radiant_gem": {
+    "en": "fire_radiant_gem",
+    "fr": "eclat_ignis"
+  },
+  "flame_organ": {
+    "en": "flame_organ",
+    "fr": "organe_de_feu"
+  },
+  "galeclaw_poultry": {
+    "en": "galeclaw_poultry",
+    "fr": "viande_de_galeclaw"
+  },
+  "giant_pal_soul": {
+    "en": "giant_pal_soul",
+    "fr": "ame_de_pal_ultime"
+  },
+  "giga_sphere": {
+    "en": "giga_sphere",
+    "fr": "giga_sphere"
+  },
+  "glistening_ancient_relic": {
+    "en": "glistening_ancient_relic",
+    "fr": "relique_antique_rayonnante"
+  },
+  "gloopie_tentacle": {
+    "en": "gloopie_tentacle",
+    "fr": "tentacule_de_gloopie"
+  },
+  "glowing_ancient_relic": {
+    "en": "glowing_ancient_relic",
+    "fr": "relique_antique_lumineuse"
+  },
+  "gold_coin": {
+    "en": "gold_coin",
+    "fr": "piece_dor"
+  },
+  "gorgeous_ancient_relic": {
+    "en": "gorgeous_ancient_relic",
+    "fr": "relique_antique_intacte"
+  },
+  "grass_radiant_gem": {
+    "en": "grass_radiant_gem",
+    "fr": "eclat_herba"
+  },
+  "ground_radiant_gem": {
+    "en": "ground_radiant_gem",
+    "fr": "eclat_terra"
+  },
+  "gumoss_leaf": {
+    "en": "gumoss_leaf",
+    "fr": "feuille_de_gumoss"
+  },
+  "gunpowder": {
+    "en": "gunpowder",
+    "fr": "poudre_a_canon"
+  },
+  "hallowed_bar": {
+    "en": "hallowed_bar",
+    "fr": "lingot_sacre"
+  },
+  "hardwood": {
+    "en": "hardwood",
+    "fr": "bois_robuste"
+  },
+  "hexolite": {
+    "en": "hexolite",
+    "fr": "hexolite"
+  },
+  "hexolite_quartz": {
+    "en": "hexolite_quartz",
+    "fr": "hexoquartz"
+  },
+  "high_quality_cloth": {
+    "en": "high_quality_cloth",
+    "fr": "tissu_de_qualite"
+  },
+  "high_quality_pal_oil": {
+    "en": "high_quality_pal_oil",
+    "fr": "huile_de_pal_de_qualite"
+  },
+  "high_quality_recovery_meds": {
+    "en": "high_quality_recovery_meds",
+    "fr": "potion_de_haute_qualite"
+  },
+  "honey": {
+    "en": "honey",
+    "fr": "miel"
+  },
+  "horn": {
+    "en": "horn",
+    "fr": "corne"
+  },
+  "hyper_sphere": {
+    "en": "hyper_sphere",
+    "fr": "hyper_sphere"
+  },
+  "ice_organ": {
+    "en": "ice_organ",
+    "fr": "organe_de_glace"
+  },
+  "ice_radiant_gem": {
+    "en": "ice_radiant_gem",
+    "fr": "eclat_glacia"
+  },
+  "ingot": {
+    "en": "ingot",
+    "fr": "lingot_de_metal"
+  },
+  "innovative_technical_manual": {
+    "en": "innovative_technical_manual",
+    "fr": "manuel_technique_innovant"
+  },
+  "jelliette_bell_flesh": {
+    "en": "jelliette_bell_flesh",
+    "fr": "chair_dombrelle_de_jelliette"
+  },
+  "jellroy_bell_flesh": {
+    "en": "jellroy_bell_flesh",
+    "fr": "chair_dombrelle_de_jellroy"
+  },
+  "katress_hair": {
+    "en": "katress_hair",
+    "fr": "poils_de_katress"
+  },
+  "killamari_tentacle": {
+    "en": "killamari_tentacle",
+    "fr": "tentacule_de_killamari"
+  },
+  "lamball_mutton": {
+    "en": "lamball_mutton",
+    "fr": "viande_de_lamball"
+  },
+  "large_pal_soul": {
+    "en": "large_pal_soul",
+    "fr": "ame_de_pal_majeur"
+  },
+  "leather": {
+    "en": "leather",
+    "fr": "cuir"
+  },
+  "leezpunk_crest": {
+    "en": "leezpunk_crest",
+    "fr": "crete_de_leezpunk"
+  },
+  "lettuce_seeds": {
+    "en": "lettuce_seeds",
+    "fr": "graines_de_laitue"
+  },
+  "low_grade_medical_supplies": {
+    "en": "low_grade_medical_supplies",
+    "fr": "medicament_de_fortune"
+  },
+  "mammorest_meat": {
+    "en": "mammorest_meat",
+    "fr": "viande_de_mammorest"
+  },
+  "medium_pal_soul": {
+    "en": "medium_pal_soul",
+    "fr": "ame_de_pal_intermediaire"
+  },
+  "mega_sphere": {
+    "en": "mega_sphere",
+    "fr": "mega_sphere"
+  },
+  "memory_wiping_medicine": {
+    "en": "memory_wiping_medicine",
+    "fr": "medicament_damnesie"
+  },
+  "meteorite_fragment": {
+    "en": "meteorite_fragment",
+    "fr": "fragment_de_meteorite"
+  },
+  "milk": {
+    "en": "milk",
+    "fr": "lait"
+  },
+  "mozzarina_meat": {
+    "en": "mozzarina_meat",
+    "fr": "viande_de_mozzarina"
+  },
+  "munchill_meat": {
+    "en": "munchill_meat",
+    "fr": "chair_de_munchill"
+  },
+  "mushroom": {
+    "en": "mushroom",
+    "fr": "champignon"
+  },
+  "mysterious_mushroom": {
+    "en": "mysterious_mushroom",
+    "fr": "champignon_etrange"
+  },
+  "neutral_radiant_gem": {
+    "en": "neutral_radiant_gem",
+    "fr": "eclat_neutra"
+  },
+  "nightstar_sand": {
+    "en": "nightstar_sand",
+    "fr": "sable_de_nuit_etoilee"
+  },
+  "onion_seeds": {
+    "en": "onion_seeds",
+    "fr": "graine_doignon"
+  },
+  "ore": {
+    "en": "ore",
+    "fr": "minerai_de_metal"
+  },
+  "pal_sphere": {
+    "en": "pal_sphere",
+    "fr": "sphere_de_pal"
+  },
+  "paldium_fragment": {
+    "en": "paldium_fragment",
+    "fr": "fragment_de_paldium"
+  },
+  "penking_plume": {
+    "en": "penking_plume",
+    "fr": "plume_de_penking"
+  },
+  "plasteel": {
+    "en": "plasteel",
+    "fr": "plastacier"
+  },
+  "potato_seeds": {
+    "en": "potato_seeds",
+    "fr": "semence_de_pomme_de_terre"
+  },
+  "pure_quartz": {
+    "en": "pure_quartz",
+    "fr": "quartz_pur"
+  },
+  "raw_dumud": {
+    "en": "raw_dumud",
+    "fr": "viande_de_dumud"
+  },
+  "raw_kelpsea": {
+    "en": "raw_kelpsea",
+    "fr": "viande_de_kelpsea"
+  },
+  "red_berries": {
+    "en": "red_berries",
+    "fr": "baie_rouge"
+  },
+  "reindrix_venison": {
+    "en": "reindrix_venison",
+    "fr": "viande_de_reindrix"
+  },
+  "ribbuny_ribbon": {
+    "en": "ribbuny_ribbon",
+    "fr": "ruban_de_ribbuny"
+  },
+  "ruby": {
+    "en": "ruby",
+    "fr": "rubis"
+  },
+  "rushoar_pork": {
+    "en": "rushoar_pork",
+    "fr": "viande_de_rushoar"
+  },
+  "sapphire": {
+    "en": "sapphire",
+    "fr": "saphir"
+  },
+  "silver_key": {
+    "en": "silver_key",
+    "fr": "cle_en_argent"
+  },
+  "skutlass_sashimi": {
+    "en": "skutlass_sashimi",
+    "fr": "filet_de_skutlass"
+  },
+  "small_pal_soul": {
+    "en": "small_pal_soul",
+    "fr": "ame_de_pal_mineur"
+  },
+  "soralite": {
+    "en": "soralite",
+    "fr": "soralite"
+  },
+  "strange_juice": {
+    "en": "strange_juice",
+    "fr": "boisson_etrange"
+  },
+  "sulfur": {
+    "en": "sulfur",
+    "fr": "soufre"
+  },
+  "suspicious_juice": {
+    "en": "suspicious_juice",
+    "fr": "boisson_douteuse"
+  },
+  "swee_hair": {
+    "en": "swee_hair",
+    "fr": "duvet_de_swee"
+  },
+  "thermal_core": {
+    "en": "thermal_core",
+    "fr": "coeur_brulant"
+  },
+  "tocotoco_feather": {
+    "en": "tocotoco_feather",
+    "fr": "plume_de_tocotoco"
+  },
+  "tomato_seeds": {
+    "en": "tomato_seeds",
+    "fr": "graines_de_tomates"
+  },
+  "training_manual_(xl)": {
+    "en": "training_manual_(xl)",
+    "fr": "manuel_de_formation_(xl)"
+  },
+  "venom_gland": {
+    "en": "venom_gland",
+    "fr": "glande_a_venin"
+  },
+  "water_radiant_gem": {
+    "en": "water_radiant_gem",
+    "fr": "eclat_aqua"
+  },
+  "wheat_seeds": {
+    "en": "wheat_seeds",
+    "fr": "graines_de_ble"
+  },
+  "wool": {
+    "en": "wool",
+    "fr": "laine"
+  },
+  "world_tree_holy_water": {
+    "en": "world_tree_holy_water",
+    "fr": "eau_sacree_de_larbre-monde"
+  }
+}
