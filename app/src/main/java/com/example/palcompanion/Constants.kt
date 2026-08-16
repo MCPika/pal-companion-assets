@@ -1,32 +1,26 @@
 package com.example.palcompanion
 
 object Constants {
-    //const val BREEDING_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/breeding.json"
-    const val BREEDING_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/breeding.json"
+    const val CANCEL_ICON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Other/cancel.webp"
 
 
-    //const val PALS_EN_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals_en.json"
-    //const val PALS_FR_JSON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/pals_fr.json"
-    const val PALS_EN_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/pals_en.json"
-    const val PALS_FR_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/pals_fr.json"
+    const val BREEDING_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Breeding/breeding.json"
+    const val CROWN_ICON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Breeding/crown_icon.png"
 
 
-    //const val CROWN_ICON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/crown_icon.png"
-    //const val CANCEL_ICON_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/cancel.webp"
-    const val CROWN_ICON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/crown_icon.png"
-    const val CANCEL_ICON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/cancel.webp"
+    const val PALS_EN_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Descr/pals_en.json"
+    const val PALS_FR_JSON_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Descr/pals_fr.json"
 
 
-    //const val PALS_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Img/"
     const val PALS_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Img/"
 
-    //const val PALS_DROPS_EN_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops_EN"
-    //const val PALS_DROPS_FR_IMAGE_URL = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main/Pals_Drops_FR"
-    const val PALS_DROPS_EN_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops_EN"
-    const val PALS_DROPS_FR_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops_FR"
+
+    const val PALS_DROPS_EN_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops/Pals_Drops_EN/"
+    const val PALS_FARMDROPS_EN_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops/farm_drops_en.json"
+    const val PALS_DROPS_FR_IMAGE_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops/Pals_Drops_FR/"
+    const val PALS_FARMDROPS_FR_URL = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main/Pals_Drops/farm_drops_fr.json"
 
 
-    //private const val BASE_URL_JOBS = "https://cdn.jsdelivr.net/gh/MCPika/pal-companion-assets@main"
     private const val BASE_URL_JOBS = "https://raw.githubusercontent.com/MCPika/pal-companion-assets/main"
     const val FARMING_PALS_ICON_URL = "$BASE_URL_JOBS/Pals_Jobs/farming.webp"
     const val MINING_ICON_URL = "$BASE_URL_JOBS/Pals_Jobs/mining.webp"

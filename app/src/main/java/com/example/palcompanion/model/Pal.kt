@@ -98,7 +98,7 @@ enum class WorkSuitability(val iconUrl: String, @StringRes val displayName: Int,
     MEDICINE_PRODUCTION(Constants.MEDICINE_PRODUCTION_ICON_URL, R.string.work_medicine_production, "PHARMACIE"),
     COOLING(Constants.COOLING_ICON_URL, R.string.work_cooling, "RÉFRIGÉRATION"),
     TRANSPORTING(Constants.TRANSPORTING_ICON_URL, R.string.work_transporting, "TRANSPORT"),
-    FARMING(Constants.FARMING_PALS_ICON_URL, R.string.work_farming, "FERME");
+    FARMING(Constants.FARMING_PALS_ICON_URL, R.string.work_farming, "EXPLOITATION");
 
     companion object {
         fun fromString(value: String): WorkSuitability? {
