@@ -48,7 +48,6 @@
     <string name="element_dragon">Dragon</string>
     <string name="no_saved_breeding_trees_found">Aucun Arbres de Reproduction Sauvegardés.</string>
     <string name="loading_pal_data">Chargement des données des Pals…</string>
-    <string name="loading_app_data">Chargement des données anglaises et françaises…</string>
     <string name="preparing_images">Préparation des images : %1$d / %2$d</string>
 
     <string name="farm_drop_arrow">Flèche</string>

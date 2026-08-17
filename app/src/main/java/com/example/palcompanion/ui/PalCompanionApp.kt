@@ -55,6 +55,7 @@ import com.example.palcompanion.Constants
 import com.example.palcompanion.R
 import com.example.palcompanion.ui.theme.PalCompanionTheme
 import kotlinx.coroutines.launch
+import androidx.compose.ui.text.font.FontWeight
 
 data class NavItem(
     val label: String,
@@ -248,6 +249,12 @@ private fun StartupLoadingScreen(progress: Pair<Int, Int>) {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.pal_screen_wallpaper),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -256,7 +263,8 @@ private fun StartupLoadingScreen(progress: Pair<Int, Int>) {
         ) {
             Text(
                 text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(24.dp))
             if (total > 0) {
@@ -272,8 +280,9 @@ private fun StartupLoadingScreen(progress: Pair<Int, Int>) {
                 text = if (total > 0) {
                     stringResource(R.string.preparing_images, completed, total)
                 } else {
-                    stringResource(R.string.loading_app_data)
-                }
+                    stringResource(R.string.loading_pal_data)
+                },
+                fontWeight = FontWeight.Bold
             )
         }
     }
