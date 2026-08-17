@@ -22,6 +22,7 @@ import java.net.URL
 interface AppContainer {
     val breedingRepository: BreedingRepository
     val datasource: Datasource
+    val imagePreloader: PalImagePreloader
 }
 
 @Serializable
@@ -74,6 +75,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val datasource: Datasource by lazy {
         Datasource(context)
+    }
+
+    override val imagePreloader: PalImagePreloader by lazy {
+        PalImagePreloader(context)
     }
 
     companion object {

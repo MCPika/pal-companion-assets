@@ -1,6 +1,5 @@
 package com.example.palcompanion.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.R
 import com.example.palcompanion.model.Filter
 import com.example.palcompanion.model.PalElement
@@ -150,8 +148,8 @@ fun FilterChip(filter: Filter, isSelected: Boolean, onClick: () -> Unit, modifie
             )
             .clickable(onClick = onClick)
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = filter.iconUrl),
+        RemoteImage(
+            model = filter.iconUrl,
             contentDescription = filter.name,
             modifier = Modifier.size(24.dp)
         )

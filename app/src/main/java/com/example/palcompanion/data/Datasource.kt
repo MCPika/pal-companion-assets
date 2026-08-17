@@ -12,6 +12,8 @@ import com.example.palcompanion.model.PalWorkSuitability
 import com.example.palcompanion.model.PartnerSkill
 import com.example.palcompanion.model.WorkSuitability
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
@@ -22,8 +24,26 @@ import java.net.URL
 class Datasource(private val context: Context) {
 
     private val palImageUrlBase = Constants.PALS_IMAGE_URL
+    private val palsCache = mutableMapOf<String, List<Pal>>()
+    private val palsCacheMutex = Mutex()
+    private val farmDropsCache = mutableMapOf<String, List<FarmDrop>>()
+    private val farmDropsCacheMutex = Mutex()
 
-    suspend fun loadPals(language: String): List<Pal> = withContext(Dispatchers.IO) {
+    suspend fun loadPals(language: String): List<Pal> {
+        palsCacheMutex.withLock { palsCache[language] }?.let { return it }
+
+        val pals = loadPalsFromNetwork(language)
+        return palsCacheMutex.withLock {
+            palsCache[language] ?: run {
+                if (pals.isNotEmpty()) {
+                    palsCache[language] = pals
+                }
+                pals
+            }
+        }
+    }
+
+    private suspend fun loadPalsFromNetwork(language: String): List<Pal> = withContext(Dispatchers.IO) {
         val pals = mutableListOf<Pal>()
         try {
             val jsonUrl = if (language == "fr") Constants.PALS_FR_JSON_URL else Constants.PALS_EN_JSON_URL
@@ -148,7 +168,21 @@ class Datasource(private val context: Context) {
         return@withContext pals
     }
 
-    suspend fun loadFarmDrops(language: String): List<FarmDrop> = withContext(Dispatchers.IO) {
+    suspend fun loadFarmDrops(language: String): List<FarmDrop> {
+        farmDropsCacheMutex.withLock { farmDropsCache[language] }?.let { return it }
+
+        val farmDrops = loadFarmDropsFromNetwork(language)
+        return farmDropsCacheMutex.withLock {
+            farmDropsCache[language] ?: run {
+                if (farmDrops.isNotEmpty()) {
+                    farmDropsCache[language] = farmDrops
+                }
+                farmDrops
+            }
+        }
+    }
+
+    private suspend fun loadFarmDropsFromNetwork(language: String): List<FarmDrop> = withContext(Dispatchers.IO) {
         val farmDrops = mutableListOf<FarmDrop>()
         try {
             val jsonUrl = if (language == "fr") Constants.PALS_FARMDROPS_FR_URL else Constants.PALS_FARMDROPS_EN_URL

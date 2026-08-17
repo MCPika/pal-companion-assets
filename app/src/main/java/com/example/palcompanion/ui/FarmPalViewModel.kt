@@ -12,6 +12,7 @@ import com.example.palcompanion.data.Datasource
 import com.example.palcompanion.data.FarmDrop
 import com.example.palcompanion.model.Pal
 import com.example.palcompanion.model.WorkSuitability
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,17 +32,12 @@ class FarmPalViewModel(
     val selectedFarmDrop: StateFlow<FarmDrop?> = _selectedFarmDrop.asStateFlow()
 
     private var allPals: List<Pal> = emptyList()
+    private var dataJob: Job? = null
 
     private val _sortedFarmDrops = MutableStateFlow<List<FarmDrop>>(emptyList())
     val sortedFarmDrops: StateFlow<List<FarmDrop>> = _sortedFarmDrops.asStateFlow()
 
     init {
-        val appLocales = AppCompatDelegate.getApplicationLocales()
-        val language = if (appLocales.isEmpty) "en" else appLocales[0]?.language ?: "en"
-        
-        loadFarmDrops(language)
-        loadPals(language)
-        
         viewModelScope.launch {
             selectedFarmDrop.collect { selectedDrop ->
                 if (selectedDrop == null) {
@@ -76,18 +72,16 @@ class FarmPalViewModel(
         }
     }
 
-    private fun loadFarmDrops(language: String) {
-        viewModelScope.launch {
+    fun loadData(language: String) {
+        dataJob?.cancel()
+        dataJob = viewModelScope.launch {
             val drops = datasource.loadFarmDrops(language)
             _sortedFarmDrops.value = drops.sortedBy { it.name }
-        }
-    }
 
-    fun loadPals(language: String) {
-        viewModelScope.launch {
             allPals = datasource.loadPals(language).filter { pal ->
                 pal.workSuitability.any { it.type == WorkSuitability.FARMING }
             }
+            _selectedFarmDrop.value = null
             _pals.value = allPals
         }
     }

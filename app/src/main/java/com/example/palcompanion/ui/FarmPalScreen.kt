@@ -1,6 +1,5 @@
 package com.example.palcompanion.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +33,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.R
 import com.example.palcompanion.model.Drop
 
@@ -88,8 +86,8 @@ fun FarmPalScreen(
                     DropdownMenuItem(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(model = drop.getImageUrl(context)),
+                                RemoteImage(
+                                    model = drop.getImageUrl(context),
                                     contentDescription = name,
                                     modifier = Modifier.size(24.dp)
                                 )

@@ -1,6 +1,5 @@
 package com.example.palcompanion.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.R
 import com.example.palcompanion.model.Pal
 import java.util.Locale
@@ -55,8 +53,8 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(model = pal.imageUrl),
+                    RemoteImage(
+                        model = pal.imageUrl,
                         contentDescription = formattedPalName,
                         modifier = Modifier
                             .padding(top = 16.dp)
@@ -73,8 +71,8 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                             style = MaterialTheme.typography.headlineSmall
                         )
                         pal.elements.forEach { element ->
-                            Image(
-                                painter = rememberAsyncImagePainter(model = element.iconIcUrl),
+                            RemoteImage(
+                                model = element.iconIcUrl,
                                 contentDescription = element.name,
                                 modifier = Modifier
                                     .size(32.dp)
@@ -152,8 +150,8 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                     )
                     pal.workSuitability.forEach { work ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = rememberAsyncImagePainter(model = work.type.iconUrl),
+                            RemoteImage(
+                                model = work.type.iconUrl,
                                 contentDescription = stringResource(work.type.displayName),
                                 modifier = Modifier.size(24.dp)
                             )
@@ -179,8 +177,8 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                     val context = LocalContext.current
                     pal.drops.forEach { drop ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = rememberAsyncImagePainter(model = drop.getImageUrl(context)),
+                            RemoteImage(
+                                model = drop.getImageUrl(context),
                                 contentDescription = drop.name,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -217,8 +215,8 @@ fun PalDetailScreen(pal: Pal, navController: NavController) {
                                     style = MaterialTheme.typography.titleMedium,
                                     color = levelColor
                                 )
-                                Image(
-                                    painter = rememberAsyncImagePainter(model = skill.element.iconIcUrl),
+                                RemoteImage(
+                                    model = skill.element.iconIcUrl,
                                     contentDescription = skill.element.name,
                                     modifier = Modifier.size(24.dp)
                                 )

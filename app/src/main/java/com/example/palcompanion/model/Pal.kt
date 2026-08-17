@@ -40,9 +40,13 @@ data class Drop(
     val special: String? = null
 ) {
     fun getImageUrl(context: Context): String {
-        val locale = context.resources.configuration.locales[0]
-        val baseUrl = if (locale.language == "fr") Constants.PALS_DROPS_FR_IMAGE_URL else Constants.PALS_DROPS_EN_IMAGE_URL
-        val imageName = if (locale.language == "fr") {
+        val language = context.resources.configuration.locales[0].language
+        return getImageUrl(language)
+    }
+
+    fun getImageUrl(language: String): String {
+        val baseUrl = if (language == "fr") Constants.PALS_DROPS_FR_IMAGE_URL else Constants.PALS_DROPS_EN_IMAGE_URL
+        val imageName = if (language == "fr") {
             Normalizer.normalize(name, Normalizer.Form.NFD)
                 .replace("\\p{M}".toRegex(), "")
                 .replace(' ', '_')

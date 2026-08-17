@@ -57,17 +57,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.palcompanion.Constants
 import com.example.palcompanion.data.Breeding
+import com.example.palcompanion.ui.RemoteImage
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -543,11 +541,8 @@ fun PalNode(
     ) {
         Box(contentAlignment = Alignment.TopCenter) {
             val imageName = palName.replace(' ', '_').lowercase()
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("${Constants.PALS_IMAGE_URL}/${imageName}.webp")
-                    .crossfade(true)
-                    .build(),
+            RemoteImage(
+                model = "${Constants.PALS_IMAGE_URL}/${imageName}.webp",
                 contentDescription = palName,
                 modifier = Modifier
                     .size(size)
@@ -559,7 +554,7 @@ fun PalNode(
                     )
             )
             if (isCrowned) {
-                AsyncImage(
+                RemoteImage(
                     model = Constants.CROWN_ICON_URL,
                     contentDescription = "Crown",
                     modifier = Modifier

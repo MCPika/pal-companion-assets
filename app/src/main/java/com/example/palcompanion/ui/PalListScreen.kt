@@ -1,7 +1,8 @@
 package com.example.palcompanion.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -38,7 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.unit.sp
 import com.example.palcompanion.R
 import com.example.palcompanion.model.Pal
 import com.example.palcompanion.model.PalElement
@@ -57,6 +58,8 @@ fun PalList(
     val selectedPalElements by viewModel.selectedPalElements.collectAsState()
     val selectedWorkSuitabilities by viewModel.selectedWorkSuitabilities.collectAsState()
     val selectedJobLevels by viewModel.selectedJobLevels.collectAsState()
+    val isFirstTypeFilterActive by viewModel.isFirstTypeFilterActive.collectAsState()
+    val isSecondTypeFilterActive by viewModel.isSecondTypeFilterActive.collectAsState()
 
     var openBottomSheet by remember { mutableStateOf(false) }
 
@@ -105,6 +108,23 @@ fun PalList(
                         Icon(Icons.Default.Clear, contentDescription = "Clear")
                     }
                 }
+
+                Row(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    TypeToggleButton(
+                        text = stringResource(R.string.first_type),
+                        isSelected = isFirstTypeFilterActive,
+                        onClick = { viewModel.toggleFirstTypeFilter() }
+                    )
+                    TypeToggleButton(
+                        text = stringResource(R.string.second_type),
+                        isSelected = isSecondTypeFilterActive,
+                        onClick = { viewModel.toggleSecondTypeFilter() }
+                    )
+                }
+
                 FlowRow(modifier = Modifier.padding(vertical = 8.dp)) {
                     PalElement.entries.forEach { element ->
                         val isSelected = selectedPalElements.contains(element)
@@ -120,8 +140,8 @@ fun PalList(
                                         CircleShape
                                     )
                             ) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(model = element.iconIcUrl),
+                                RemoteImage(
+                                    model = element.iconIcUrl,
                                     contentDescription = element.name,
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -154,8 +174,8 @@ fun PalList(
                                         CircleShape
                                     )
                             ) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(model = work.iconUrl),
+                                RemoteImage(
+                                    model = work.iconUrl,
                                     contentDescription = stringResource(id = work.displayName),
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -195,5 +215,31 @@ fun PalList(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun TypeToggleButton(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .border(
+                width = 1.dp,
+                color = if (isSelected) Color.Red else Color.White,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            fontSize = 12.sp,
+            color = if (isSelected) Color.Red else Color.White
+        )
     }
 }

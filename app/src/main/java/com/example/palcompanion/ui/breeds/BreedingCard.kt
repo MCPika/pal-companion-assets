@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,11 +26,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.palcompanion.Constants
 import com.example.palcompanion.R
 import com.example.palcompanion.data.Breeding
+import com.example.palcompanion.ui.RemoteImage
 
 @Composable
 fun BreedingCard(
@@ -93,12 +91,8 @@ fun PalIcon(name: String, modifier: Modifier = Modifier) {
                     .border(1.dp, Color.White, CircleShape)
             )
         } else {
-            // Use the raw database name (e.g., "green_slime") directly in the URL, as you correctly pointed out.
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("${Constants.PALS_IMAGE_URL}/${name}.webp")
-                    .crossfade(true)
-                    .build(),
+            RemoteImage(
+                model = "${Constants.PALS_IMAGE_URL}/${name}.webp",
                 contentDescription = displayName,
                 modifier = Modifier
                     .size(70.dp)

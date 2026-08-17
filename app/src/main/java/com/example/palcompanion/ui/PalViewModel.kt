@@ -1,7 +1,5 @@
 package com.example.palcompanion.ui
 
-import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,10 +7,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.palcompanion.PalCompanionApplication
 import com.example.palcompanion.data.Datasource
+import com.example.palcompanion.data.PalImagePreloader
 import com.example.palcompanion.data.repository.BreedingRepository
 import com.example.palcompanion.model.Pal
 import com.example.palcompanion.model.PalElement
 import com.example.palcompanion.model.WorkSuitability
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +24,8 @@ import kotlinx.coroutines.launch
 
 class PalViewModel(
     private val datasource: Datasource,
-    private val breedingRepository: BreedingRepository
+    private val breedingRepository: BreedingRepository,
+    private val imagePreloader: PalImagePreloader
 ) : ViewModel() {
 
     private val _pals = MutableStateFlow<List<Pal>>(emptyList())
@@ -31,10 +34,15 @@ class PalViewModel(
     private val _breedingCombos = MutableStateFlow<Map<String, List<com.example.palcompanion.data.Breeding>>>(emptyMap())
     val breedingCombos: StateFlow<Map<String, List<com.example.palcompanion.data.Breeding>>> = _breedingCombos.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    private val _isAppReady = MutableStateFlow(false)
+    val isAppReady: StateFlow<Boolean> = _isAppReady.asStateFlow()
+
+    private val _imagePreloadProgress = MutableStateFlow(0 to 0)
+    val imagePreloadProgress: StateFlow<Pair<Int, Int>> = _imagePreloadProgress.asStateFlow()
 
     private var allPals: List<Pal> = emptyList()
+    private var palsByLanguage: Map<String, List<Pal>> = emptyMap()
+    private var startupJob: Job? = null
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -48,18 +56,23 @@ class PalViewModel(
     private val _selectedJobLevels = MutableStateFlow<Set<Int>>(emptySet())
     val selectedJobLevels: StateFlow<Set<Int>> = _selectedJobLevels.asStateFlow()
 
+    private val _isFirstTypeFilterActive = MutableStateFlow(false)
+    val isFirstTypeFilterActive: StateFlow<Boolean> = _isFirstTypeFilterActive.asStateFlow()
+
+    private val _isSecondTypeFilterActive = MutableStateFlow(false)
+    val isSecondTypeFilterActive: StateFlow<Boolean> = _isSecondTypeFilterActive.asStateFlow()
+
     init {
-        val appLocales = AppCompatDelegate.getApplicationLocales()
-        val language = if (appLocales.isEmpty) "en" else appLocales[0]?.language ?: "en"
-        loadPals(language)
         loadBreedingCombos()
         viewModelScope.launch {
             combine(
                 _searchQuery,
                 _selectedWorkSuitabilities,
                 _selectedPalElements,
-                _selectedJobLevels
-            ) { query, workFilters, elementFilters, jobLevelFilters ->
+                _selectedJobLevels,
+                combine(_isFirstTypeFilterActive, _isSecondTypeFilterActive) { first, second -> first to second }
+            ) { query, workFilters, elementFilters, jobLevelFilters, typeFilters ->
+                val (firstTypeActive, secondTypeActive) = typeFilters
                 val filteredPals = allPals.filter { pal ->
                     val matchesQuery = if (query.isEmpty()) {
                         true
@@ -89,7 +102,28 @@ class PalViewModel(
                         }
                     }
 
-                    val matchesElementFilters = elementFilters.isEmpty() || pal.elements.containsAll(elementFilters)
+                    val matchesElementFilters = when {
+                        elementFilters.isEmpty() -> true
+                        firstTypeActive && secondTypeActive -> {
+                            // If both are active, pal must have these elements in either position
+                            // But usually, a pal has 1 or 2 elements.
+                            // The request says: "choose 1stType or 2ndType or neither"
+                            // If both are chosen, we'll check if any selected elements are in 1st AND any in 2nd
+                            // Or maybe it means "1st type is one of these" AND "2nd type is one of these"
+                            val firstMatch = pal.elements.getOrNull(0) in elementFilters
+                            val secondMatch = pal.elements.getOrNull(1) in elementFilters
+                            firstMatch && secondMatch
+                        }
+                        firstTypeActive -> {
+                            pal.elements.getOrNull(0) in elementFilters
+                        }
+                        secondTypeActive -> {
+                            pal.elements.getOrNull(1) in elementFilters
+                        }
+                        else -> {
+                            pal.elements.containsAll(elementFilters)
+                        }
+                    }
 
                     matchesQuery && matchesWorkFilters && matchesJobLevelFilters && matchesElementFilters
                 }
@@ -98,12 +132,44 @@ class PalViewModel(
         }
     }
 
-    fun loadPals(language: String) {
-        viewModelScope.launch {
-            allPals = datasource.loadPals(language)
-            _pals.value = allPals
-            _isLoading.value = false
+    fun prepareApp(initialLanguage: String) {
+        if (startupJob != null || _isAppReady.value) return
+
+        startupJob = viewModelScope.launch {
+            _imagePreloadProgress.value = 0 to 0
+            try {
+                val (loadedPals, loadedFarmDrops) = coroutineScope {
+                    val englishPals = async { datasource.loadPals("en") }
+                    val frenchPals = async { datasource.loadPals("fr") }
+                    val englishFarmDrops = async { datasource.loadFarmDrops("en") }
+                    val frenchFarmDrops = async { datasource.loadFarmDrops("fr") }
+
+                    mapOf(
+                        "en" to englishPals.await(),
+                        "fr" to frenchPals.await()
+                    ) to mapOf(
+                        "en" to englishFarmDrops.await(),
+                        "fr" to frenchFarmDrops.await()
+                    )
+                }
+
+                imagePreloader.preload(loadedPals, loadedFarmDrops) { completed, total ->
+                    _imagePreloadProgress.value = completed to total
+                }
+
+                palsByLanguage = loadedPals
+                selectLanguage(initialLanguage)
+            } finally {
+                _isAppReady.value = true
+            }
         }
+    }
+
+    fun selectLanguage(language: String) {
+        val normalizedLanguage = if (language == "fr") "fr" else "en"
+        val loadedPals = palsByLanguage[normalizedLanguage] ?: return
+        allPals = loadedPals
+        _pals.value = allPals
     }
 
     private fun loadBreedingCombos() {
@@ -140,6 +206,20 @@ class PalViewModel(
         _selectedPalElements.value = currentFilters
     }
 
+    fun toggleFirstTypeFilter() {
+        _isFirstTypeFilterActive.value = !_isFirstTypeFilterActive.value
+        if (_isFirstTypeFilterActive.value) {
+            _isSecondTypeFilterActive.value = false
+        }
+    }
+
+    fun toggleSecondTypeFilter() {
+        _isSecondTypeFilterActive.value = !_isSecondTypeFilterActive.value
+        if (_isSecondTypeFilterActive.value) {
+            _isFirstTypeFilterActive.value = false
+        }
+    }
+
     fun onJobLevelFilterClicked(level: Int) {
         val currentFilters = _selectedJobLevels.value.toMutableSet()
         if (level in currentFilters) {
@@ -152,6 +232,8 @@ class PalViewModel(
 
     fun clearPalElementFilters() {
         _selectedPalElements.value = emptySet()
+        _isFirstTypeFilterActive.value = false
+        _isSecondTypeFilterActive.value = false
     }
 
     fun clearWorkSuitabilityFilters() {
@@ -173,7 +255,11 @@ class PalViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as PalCompanionApplication)
-                PalViewModel(application.container.datasource, application.container.breedingRepository)
+                PalViewModel(
+                    application.container.datasource,
+                    application.container.breedingRepository,
+                    application.container.imagePreloader
+                )
             }
         }
     }

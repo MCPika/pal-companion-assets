@@ -13,7 +13,6 @@ navigationCompose = "2.9.6"
 kotlinxSerializationJson = "1.6.3"
 coilCompose = "2.7.0"
 materialIconsExtended = "1.7.8"
-picasso = "2.71828"
 ksp = "2.0.0-1.0.21"
 room = "2.8.4"
 animationCore = "1.10.0"
@@ -40,7 +39,6 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
-picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

@@ -53,6 +53,9 @@
     <string name="cancel">Cancel</string>
     <string name="pal_number_prefix">No. </string>
     <string name="no_saved_breeding_trees_found">No Saved Breeding Trees.</string>
+    <string name="loading_pal_data">Loading Pal data…</string>
+    <string name="loading_app_data">Loading English and French data…</string>
+    <string name="preparing_images">Preparing images: %1$d / %2$d</string>
 
     <string name="farm_drop_arrow">Arrow</string>
     <string name="farm_drop_bone">Bone</string>
@@ -72,4 +75,7 @@
     <string name="farm_drop_red_berries">Red Berries</string>
     <string name="farm_drop_venom_gland">Venom Gland</string>
     <string name="farm_drop_wool">Wool</string>
+
+    <string name="first_type">1st Type</string>
+    <string name="second_type">2nd Type</string>
 </resources>

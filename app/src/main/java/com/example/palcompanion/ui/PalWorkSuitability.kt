@@ -1,6 +1,5 @@
 package com.example.palcompanion.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -12,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.example.palcompanion.model.PalWorkSuitability
 
 @Composable
@@ -21,8 +19,8 @@ fun PalWorkSuitability(workSuitability: PalWorkSuitability, modifier: Modifier =
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(workSuitability.type.iconUrl),
+        RemoteImage(
+            model = workSuitability.type.iconUrl,
             contentDescription = stringResource(id = workSuitability.type.displayName),
             modifier = Modifier.size(24.dp)
         )

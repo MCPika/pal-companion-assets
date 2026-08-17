@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.example.palcompanion.Constants
 import com.example.palcompanion.R
 import com.example.palcompanion.ui.theme.PalCompanionTheme
@@ -74,35 +75,46 @@ fun PalCompanionApp() {
 
         val appLocales = AppCompatDelegate.getApplicationLocales()
         var currentLanguage by remember { mutableStateOf(if (appLocales.isEmpty) "en" else appLocales[0]?.language ?: "en") }
+        val isAppReady by palViewModel.isAppReady.collectAsState()
+        val startupProgress by palViewModel.imagePreloadProgress.collectAsState()
 
-        LaunchedEffect(currentLanguage) {
-            palViewModel.loadPals(currentLanguage)
-            farmPalViewModel.loadPals(currentLanguage)
+        LaunchedEffect(Unit) {
+            palViewModel.prepareApp(currentLanguage)
         }
 
-        val navItems = listOf(
-            NavItem(
-                stringResource(R.string.listing_of_pals),
-                Icons.AutoMirrored.Filled.List,
-                PalCompanionRoute.PalList.route
-            ),
-            NavItem(
-                stringResource(R.string.farming_pals),
-                Icons.Default.Home,
-                PalCompanionRoute.FarmPal.route
-            ),
-            NavItem(
-                stringResource(R.string.breeding_tree_saved),
-                Icons.Default.Save,
-                PalCompanionRoute.BreedingTreeSaved.route
-            )
-        )
+        LaunchedEffect(currentLanguage, isAppReady) {
+            if (isAppReady) {
+                palViewModel.selectLanguage(currentLanguage)
+                farmPalViewModel.loadData(currentLanguage)
+            }
+        }
 
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
-                ModalDrawerSheet(windowInsets = WindowInsets(0, 0, 0, 0)) {
-                    Column(modifier = Modifier.fillMaxSize()) {
+        if (!isAppReady) {
+            StartupLoadingScreen(progress = startupProgress)
+        } else {
+            val navItems = listOf(
+                NavItem(
+                    stringResource(R.string.listing_of_pals),
+                    Icons.AutoMirrored.Filled.List,
+                    PalCompanionRoute.PalList.route
+                ),
+                NavItem(
+                    stringResource(R.string.farming_pals),
+                    Icons.Default.Home,
+                    PalCompanionRoute.FarmPal.route
+                ),
+                NavItem(
+                    stringResource(R.string.breeding_tree_saved),
+                    Icons.Default.Save,
+                    PalCompanionRoute.BreedingTreeSaved.route
+                )
+            )
+
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    ModalDrawerSheet(windowInsets = WindowInsets(0, 0, 0, 0)) {
+                        Column(modifier = Modifier.fillMaxSize()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -141,7 +153,7 @@ fun PalCompanionApp() {
                                 }
 
                                 if (imageUrl != null) {
-                                    AsyncImage(
+                                    RemoteImage(
                                         model = imageUrl,
                                         contentDescription = item.label,
                                         modifier = Modifier.size(24.dp)
@@ -186,37 +198,83 @@ fun PalCompanionApp() {
                         }
 
                         Spacer(modifier = Modifier.weight(0.1f))
+                        }
                     }
                 }
-            }
-        ) {
-            Scaffold(
-                topBar = {
-                    val topRoutes = navItems.map { it.route }
-                    PalAppBar(
-                        title = "",
-                        onMenuClicked = {
-                            scope.launch {
-                                drawerState.apply {
-                                    if (isClosed) open() else close()
+            ) {
+                Scaffold(
+                    topBar = {
+                        val topRoutes = navItems.map { it.route }
+                        PalAppBar(
+                            title = "",
+                            onMenuClicked = {
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
                                 }
+                            },
+                            onBackClicked = if (currentRoute != null && !topRoutes.contains(currentRoute)) {
+                                { navController.popBackStack() }
+                            } else {
+                                null
                             }
-                        },
-                        onBackClicked = if (currentRoute != null && !topRoutes.contains(currentRoute)) {
-                            { navController.popBackStack() }
-                        } else {
-                            null
-                        }
+                        )
+                    }
+                ) { innerPadding ->
+                    PalCompanionNavHost(
+                        navController = navController,
+                        palViewModel = palViewModel,
+                        farmPalViewModel = farmPalViewModel,
+                        modifier = Modifier.padding(innerPadding)
                     )
                 }
-            ) { innerPadding ->
-                PalCompanionNavHost(
-                    navController = navController,
-                    palViewModel = palViewModel,
-                    farmPalViewModel = farmPalViewModel,
-                    modifier = Modifier.padding(innerPadding)
-                )
             }
+        }
+    }
+}
+
+@Composable
+private fun StartupLoadingScreen(progress: Pair<Int, Int>) {
+    val completed = progress.first
+    val total = progress.second
+    val progressFraction = if (total > 0) {
+        (completed.toFloat() / total.toFloat()).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            if (total > 0) {
+                LinearProgressIndicator(
+                    progress = { progressFraction },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = if (total > 0) {
+                    stringResource(R.string.preparing_images, completed, total)
+                } else {
+                    stringResource(R.string.loading_app_data)
+                }
+            )
         }
     }
 }
